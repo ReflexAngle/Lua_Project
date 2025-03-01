@@ -1,0 +1,2 @@
+## NOTES FOR GAME
+## LOVE2D version 11.2.0
