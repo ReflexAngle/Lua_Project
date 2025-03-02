@@ -5,7 +5,7 @@ local screenHeight = love.graphics.getHeight() -- Gets the screen height
 local anim8 = require("anim8") -- anim8 library for animations
 
 
---setting up sprites
+-- setting sprites
 local sprites = {
     background = love.graphics.newImage("background.png"),
     player = love.graphics.newImage("Player.png"),
@@ -17,7 +17,7 @@ local bgHeight = sprites.background:getHeight()
 local frameWidth = 16
 local frameHeight = 32
 
--- grid for anim8 to use
+-- grid for anim8 to use to pick for animations
 local grid = anim8.newGrid(frameWidth, frameHeight, sprites.playerWalkSheet:getWidth(), sprites.playerWalkSheet:getHeight()) -- Creates a grid for the player sprite
 
 
@@ -29,9 +29,11 @@ local scaledHeight = bgHeight * scale
 local offsetX = (screenWidth - scaledWidth) / 2
 local offsetY = (screenHeight - scaledHeight) / 2
 
+-- main player config
 local player =
 {
     dragging = false,
+    pressed = false,
     walkSpeed = 3,
     transform = {
         x = (screenWidth - frameWidth * playerScaler) / 2,
@@ -53,14 +55,12 @@ local player =
 
 
 function love.load() -- This runs once at the start of the game
-    --fonts
+    -- fonts
     local font = love.graphics.newFont(16)
     love.graphics.setFont(font)
 end
 
 function love.update(dt)
-   local pressed = false
-
     --mouse movement for dragging
     if  player.dragging then
         player.transform.x = love.mouse.getX() - player.transform.width / 2
@@ -95,18 +95,18 @@ function love.update(dt)
     if not pressed then
         player.animations.currWalk = player.animations.idle
     end
-    player.animations.currWalk:update(dt) --updates the current animation
+    player.animations.currWalk:update(dt) -- updates the current animation
 end
 
 function love.draw() -- draws graphics
 
-    --game title and version of love
+    -- game title and version of love
     love.graphics.print("Love2D version: " .. major .. "." .. minor .. "." .. revision .. " (The Legend of Kofe Version: Alpha 0.00.01)")
  
-    --drawing bg 
+    -- drawing background 
     love.graphics.draw(sprites.background, offsetX, offsetY, 0, scale, scale) 
     
-    --testing walk animations
+    -- testing walk animations
     player.animations.currWalk:draw(
     sprites.playerWalkSheet,
     offsetX + player.transform.x,

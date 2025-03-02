@@ -1,4 +1,9 @@
 ## NOTES FOR GAME
 ## LOVE2D version 11.2.0
 
-#player is 16 x 32 px
+# player is 16 x 32 px
+# Run "Get-ExecutionPolicy"
+# Then Run "Set-ExecutionPolicy AllSigned -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))"
+# Check if it worked with "choco --version"
+# Then "choco install love --ignore-checksums"
+# Then "choco install lua --all"
