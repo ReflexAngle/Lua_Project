@@ -4,12 +4,11 @@ local screenHeight = love.graphics.getHeight() -- Gets the screen height
 
 --local anim8 = require('libs.anim8') -- anim8 library for animations
 local player = require("src.player") -- player class
+local drag = require("src.drag") -- drag class
 
--- setting sprites
+-- setting bg sprites
 local sprites = {
     background = love.graphics.newImage("assets/imgs/background.png"),
-    --player = love.graphics.newImage("Player.png"),
-    --playerWalkSheet = love.graphics.newImage("playerWalkSheet.png")
 }
 
 -- scaling and sizing
@@ -20,38 +19,9 @@ local scaledWidth = bgWidth * scale
 local scaledHeight = bgHeight * scale
 local offsetX = (screenWidth - scaledWidth) / 2
 local offsetY = (screenHeight - scaledHeight) / 2
-
 local frameWidth = 16
 local frameHeight = 32
 local playerScaler = 3 -- scales player sprite
-
--- grid for anim8 to use to pick for animations
---local grid = anim8.newGrid(frameWidth, frameHeight, sprites.playerWalkSheet:getWidth(), sprites.playerWalkSheet:getHeight()) -- Creates a grid for the player sprite
-
-
-
--- main player config
--- local player =
--- {
---     dragging = false,
---     pressed = false,
---     walkSpeed = 3,
---     transform = {
---         x = (screenWidth - frameWidth * playerScaler) / 2,
---         y = (screenHeight - frameHeight * playerScaler) / 2,
---         width = frameWidth * playerScaler,
---         height = frameHeight * playerScaler
---     },
-
---     animations = {
---         idle = anim8.newAnimation(grid('1-1', 1), 0.1),
---         walkDown = anim8.newAnimation(grid('1-4', 1), 0.1),
---         walkRight = anim8.newAnimation(grid('2-4', 2), 0.1),
---         walkUp = anim8.newAnimation(grid('3-4', 3), 0.1),
---         walkLeft = anim8.newAnimation(grid('4-4', 4), 0.1),
---         currWalk = anim8.newAnimation(grid('1-4', 1), 0.1),
---     }
--- }
 
 
 
@@ -109,31 +79,21 @@ function love.draw() -- draws graphics
  
     -- drawing background 
     love.graphics.draw(sprites.background, offsetX, offsetY, 0, scale, scale) 
+    
     -- draw player
     player:draw(offsetX, offsetY, scaledWidth, scaledHeight)
-    -- testing walk animations
-    -- player.animations.currWalk:draw(
-    -- sprites.playerWalkSheet,
-    -- offsetX + player.transform.x,
-    -- offsetY + player.transform.y,
-    -- 0,
-    -- playerScaler,
-    -- playerScaler)
+    drag.init(player) -- drag function input anything
 end
 
 
 
 
--- was testing a drag func, you should be able to drag the player
-function love.mousepressed(x, y)
-    if x > player.transform.x
-        and x < player.transform.x + player.transform.width
-        and y > player.transform.y
-        and y < player.transform.y + player.transform.height then
-        player.dragging = true
-    end
+-- drag functions
+function love.mousepressed(x, y, button)
+    drag.mousepressed(x, y, button)
 end
 
-function love.mousereleased()
-    player.dragging = false
+
+function love.mousereleased(x, y, button)
+    drag.mousereleased(x, y, button)
 end
