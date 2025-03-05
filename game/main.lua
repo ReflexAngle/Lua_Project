@@ -5,6 +5,7 @@ local screenHeight = love.graphics.getHeight() -- Gets the screen height
 --local anim8 = require('libs.anim8') -- anim8 library for animations
 local player = require("src.player") -- player class
 local drag = require("src.drag") -- drag class
+local enemy = require("enemy") -- load the enemy thing
 
 -- setting bg sprites
 local sprites = {
@@ -30,6 +31,9 @@ function love.load() -- This runs once at the start of the game
     local font = love.graphics.newFont(16)
     love.graphics.setFont(font)
     player:load(screenWidth, screenHeight, frameWidth, frameHeight, playerScaler)
+
+    
+
 end
 
 function love.update(dt)
@@ -70,6 +74,8 @@ function love.update(dt)
         player.animations.currWalk = player.animations.idle
     end
     player:update(dt) -- updates the current animation
+
+    enemy.EnemyMove(player.transform.x, player.transform.y, dt)
 end
 
 function love.draw() -- draws graphics
@@ -82,6 +88,7 @@ function love.draw() -- draws graphics
     
     -- draw player
     player:draw(offsetX, offsetY, scaledWidth, scaledHeight)
+    enemy.DrawEnemy()
     drag.init(player) -- drag function input anything
 end
 
