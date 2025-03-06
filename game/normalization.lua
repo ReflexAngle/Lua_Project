@@ -1,6 +1,6 @@
 local normalize = {}
 
-
+-- Mathmatical functions should be handled here for the sake of organization
 -- Normalizes a vector so diagonal movement isn't faster than horizontal/vertical movement
 function normalize.NormalizedVector(dx, dy)
     local length = math.sqrt(dx * dx + dy * dy)

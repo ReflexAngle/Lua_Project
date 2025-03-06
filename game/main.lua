@@ -7,6 +7,7 @@ local player = require("src.player") -- player class
 local drag = require("src.drag") -- drag class
 local enemy = require("enemy") -- load the enemy thing
 local normalize = require("normalization") -- load the normalization thing
+local cameraFollow = require("cameraFollow") -- load the camera follow thing
 
 -- setting bg sprites
 local sprites = {
@@ -38,7 +39,7 @@ function love.load() -- This runs once at the start of the game
 end
 
 function love.update(dt)
-    local pressed = false
+    --local pressed = false
     local dx, dy = 0, 0
 
     --mouse movement for dragging
@@ -86,12 +87,13 @@ function love.update(dt)
     player:update(dt) -- updates the current animation
 
     enemy.EnemyMove(player.transform.x, player.transform.y, dt)
+    
+    cameraFollow.FollowPlayer(player)
 end
 
 function love.draw() -- draws graphics
-
-    -- game title and version of love
-    love.graphics.print("Love2D version: " .. major .. "." .. minor .. "." .. revision .. " (The Legend of Kofe Version: Alpha 0.00.01)")
+    cameraFollow.Apply() -- apply cameraFollow
+    
  
     -- drawing background 
     love.graphics.draw(sprites.background, offsetX, offsetY, 0, scale, scale) 
@@ -100,6 +102,7 @@ function love.draw() -- draws graphics
     player:draw(offsetX, offsetY, scaledWidth, scaledHeight)
     enemy.DrawEnemy()
     drag.init(player) -- drag function input anything
+    cameraFollow.Reset() -- apply cameraFollow
 end
 
 

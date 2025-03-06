@@ -1,7 +1,12 @@
-function PlayerMovement()
+local playerInput = {}
+
+function playerInput.PlayerMovement()
+    
 
 end
 
-function MouseLook()
+function playerInput.MouseLook()
     
 end
+
+return playerInput
