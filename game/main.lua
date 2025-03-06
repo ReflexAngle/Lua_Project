@@ -6,6 +6,7 @@ local screenHeight = love.graphics.getHeight() -- Gets the screen height
 local player = require("src.player") -- player class
 local drag = require("src.drag") -- drag class
 local enemy = require("enemy") -- load the enemy thing
+local normalize = require("normalization") -- load the normalization thing
 
 -- setting bg sprites
 local sprites = {
@@ -38,6 +39,7 @@ end
 
 function love.update(dt)
     local pressed = false
+    local dx, dy = 0, 0
 
     --mouse movement for dragging
     if  player.dragging then
@@ -47,32 +49,40 @@ function love.update(dt)
 
     --keyboard movement
     if love.keyboard.isDown("right") or love.keyboard.isDown("d") then
-        player.transform.x = player.transform.x + player.walkSpeed
+        --player.transform.x = player.transform.x + player.walkSpeed
+        dx = dx + 1
         player.animations.currWalk = player.animations.walkRight
-        pressed = true
     end
 
     if love.keyboard.isDown("left") or love.keyboard.isDown("a") then
-        player.transform.x = player.transform.x - player.walkSpeed
+        --player.transform.x = player.transform.x - player.walkSpeed
+        dx = dx - 1
         player.animations.currWalk = player.animations.walkLeft
-        pressed = true
     end
 
     if love.keyboard.isDown("up") or love.keyboard.isDown("w") then
-        player.transform.y = player.transform.y - player.walkSpeed
+        --player.transform.y = player.transform.y - player.walkSpeed
+        dy = dy - 1
         player.animations.currWalk = player.animations.walkUp
-        pressed = true
     end
 
     if love.keyboard.isDown("down") or love.keyboard.isDown("s") then
-        player.transform.y = player.transform.y + player.walkSpeed
+        --player.transform.y = player.transform.y + player.walkSpeed
+        dy = dy + 1
         player.animations.currWalk = player.animations.walkDown
-        pressed = true
+    end
+    if dx ~= 0 or dy ~= 0 then
+        local normDx, normDy = normalize.NormalizedVector(dx, dy)
+        player.transform.x = player.transform.x + normDx * player.walkSpeed
+        player.transform.y = player.transform.y + normDy * player.walkSpeed
+    else
+        player.animations.currWalk = player.animations.idle
+
     end
     
-    if not pressed then
-        player.animations.currWalk = player.animations.idle
-    end
+    -- if not pressed then
+    --     player.animations.currWalk = player.animations.idle
+    -- end
     player:update(dt) -- updates the current animation
 
     enemy.EnemyMove(player.transform.x, player.transform.y, dt)
