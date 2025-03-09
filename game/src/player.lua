@@ -1,11 +1,17 @@
 local anim8 = require 'libs/anim8'
+local ObjectPool = require 'patterns/objectPool'
+
 
 local Player = {}
 
 function Player:load(screenWidth, screenHeight, frameWidth, frameHeight, playerScaler)
     self.sprites = {
-        playerWalkSheet = love.graphics.newImage('assets/imgs/playerWalkSheet.png')
+        playerWalkSheet = love.graphics.newImage('assets/imgs/playerWalkSheet.png'),
+        fullHPBar = love.graphics.newImage('assets/imgs/fullHPBar.png'),
+        emptyHPBar = love.graphics.newImage('assets/imgs/emptyHPBar.png')
     }
+    self.max_hearts = 3
+    self.hearts = self.max_hearts
     self.walkSpeed = 3
     self.playerScaler = 3
     self.dragging = false
