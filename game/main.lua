@@ -24,7 +24,7 @@ local offsetX = (screenWidth - scaledWidth) / 2
 local offsetY = (screenHeight - scaledHeight) / 2
 local frameWidth = 16
 local frameHeight = 32
-local playerScaler = 3 -- scales player sprite
+local playerScaler = 3 -- scales player sprites
 
 
 
@@ -103,6 +103,9 @@ function love.draw() -- draws graphics
     enemy.DrawEnemy()
     drag.init(player) -- drag function input anything
     cameraFollow.Reset() -- apply cameraFollow
+    
+    --draw HUD elements
+    player:drawHearts()
 end
 
 
