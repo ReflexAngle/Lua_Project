@@ -22,5 +22,11 @@ function cameraFollow.Reset()
     love.graphics.pop()
     
 end
+function cameraFollow.camSmooth()
+    local smoothSpeed = 5
+    camera.x = camera.x + (player.transform.x - camera.x) * smoothSpeed * dt
+    camera.y = camera.y + (player.transform.y - camera.y) * smoothSpeed * dt
+    -- body
+end
 
 return cameraFollow
