@@ -5,6 +5,7 @@ local screenHeight = love.graphics.getHeight() -- Gets the screen height
 --local anim8 = require('libs.anim8') -- anim8 library for animations
 local player = require("src.player") -- player class
 local drag = require("src.drag") -- drag class
+local json = require("libs.dkjson") -- json library
 local enemy = require("enemy") -- load the enemy thing
 local normalize = require("normalization") -- load the normalization thing
 local cameraFollow = require("cameraFollow") -- load the camera follow thing
@@ -26,14 +27,42 @@ local frameWidth = 16
 local frameHeight = 32
 local playerScaler = 3 -- scales player sprites
 
+-- player data file 
+local function loadPlayerData()
+    if not love.filesystem.getInfo("playerdata", "directory") then
+        love.filesystem.createDirectory("playerdata")
+    end
 
+    local filePath = "playerdata/player_data.json"
+
+    if love.filesystem.getInfo(filePath) then
+        local jsonData = love.filesystem.read(filePath)
+        return json.decode(jsonData)
+    else
+        local defaultData = {
+            health = 100,
+            maxHealth = 100,
+            position = { x = 0, y = 0 }
+        }
+
+        local encodedData = json.encode(defaultData)
+        love.filesystem.write(filePath, encodedData)
+        return defaultData
+    end
+
+    
+end
 
 function love.load() -- This runs once at the start of the game
+    -- create a player data file
+    local playerData = loadPlayerData()
     -- fonts
     local font = love.graphics.newFont(16)
     love.graphics.setFont(font)
     player:load(screenWidth, screenHeight, frameWidth, frameHeight, playerScaler)
-
+    local screenWidth = love.graphics.getWidth()
+    local screenHeight = love.graphics.getHeight()
+    enemy.spawnEnemy(screenWidth, screenHeight)
     
 
 end
@@ -107,10 +136,6 @@ function love.draw() -- draws graphics
     --draw HUD elements
     player:drawHearts()
 end
-
-
-
-
 -- drag functions
 function love.mousepressed(x, y, button)
     drag.mousepressed(x, y, button)
