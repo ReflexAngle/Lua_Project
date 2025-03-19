@@ -49,8 +49,6 @@ local function loadPlayerData()
         love.filesystem.write(filePath, encodedData)
         return defaultData
     end
-
-    
 end
 
 function love.load() -- This runs once at the start of the game

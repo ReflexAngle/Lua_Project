@@ -1,20 +1,27 @@
 local enemy = {}
-local enemySpeed = 100
+local enemySpeed = 0
+local enemyHealth = nil
 enemy.x = 0
 enemy.y = 0
 
 local normalize = require("normalization")
 
 function enemy.DrawEnemy()
+    enemySpeed = 100
+    enemyHealth = 100
     love.graphics.rectangle("fill",enemy.x, enemy.y,10,10)
     
 end
 function  enemy.DrawEnemy2()
+    enemySpeed = 50
+    enemyHealth = 200
     love.graphics.rectangle("fill",enemy.x, enemy.y,10,10)
     love.graphics.setColor(255,0,0)
     
 end
 function enemy.DrawEnemy3()
+    enemySpeed = 200
+    enemyHealth = 50
     love.graphics.rectangle("fill",enemy.x, enemy.y,10,10)
     love.graphics.setColor(0,255,0)
     
@@ -61,6 +68,9 @@ end
 
 -- spawns the enemies a distance off the camera
 -- should use the Object Pool pattern to decide the enemies
+function enemy.EnemyObjectPool()
+    local currentEnemy
+end
 function enemy.spawnEnemy(screenWidth, screenHeight)
     local side = math.random(1,4)
 
@@ -80,8 +90,18 @@ function enemy.spawnEnemy(screenWidth, screenHeight)
         enemy.x = screenWidth + 20
         enemy.y = math.random(0, screenHeight)
     end
-    
+    print(side)
 end
 
+function enemy.pickEnemyStrategy()
+    local strategy = math.random(1,3)
+    if strategy == 1 then
+        enemy.DrawEnemy()
+    elseif strategy == 2 then
+        enemy.DrawEnemy2()
+    elseif strategy == 3 then
+        enemy.DrawEnemy3()
+    end
+end
 return enemy
 
