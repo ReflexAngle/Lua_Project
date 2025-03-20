@@ -7,3 +7,8 @@
 # Check if it worked with "choco --version"
 # Then "choco install love --ignore-checksums"
 # Then "choco install lua --all"
+
+
+upgrade station
+enemies drop powerups and cash
+boss fights

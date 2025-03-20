@@ -5,8 +5,8 @@ local Player = {}
 
 function Player:load(screenWidth, screenHeight, frameWidth, frameHeight, playerScaler)
     --init max hearts before assigning curr hearts
-    self.max_hearts = 3
-    self.hearts = self.max_hearts
+    self.max_hearts = 5
+    self.hearts =  3 --self.max_hearts
     self.walkSpeed = 3
     self.playerScaler = playerScaler
     self.dragging = false

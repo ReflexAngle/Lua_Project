@@ -1,5 +1,6 @@
 local enemy = {}
 
+local enemylist = {}
 local DrawEnemy1 = require("strategies.enemyOne")
 local DrawEnemy2 = require("strategies.enemyTwo")
 local DrawEnemy3 = require("strategies.enemyThree")
@@ -13,6 +14,8 @@ enemy.enemySpeed = 0
 local enemyHealth = nil
 enemy.x = 0
 enemy.y = 0
+
+local nextSpawnTime = love.timer.getTime() + 1
 
 function enemy.pickEnemyStrategy()
     local strategyIndex = math.random(1, #strategies)
@@ -97,6 +100,37 @@ function enemy.spawnEnemy(screenWidth, screenHeight)
     end
     print(side)
 end
+
+-- handels the spawnig of enemies
+-- when they spawn, how many spawn, etc
+function enemy.EnemyWaveHandling(dt, screenWidth, screenHeight)
+    if not enemy.spawnTimer then
+        enemy.spawnTimer = 0
+    end
+
+    -- Number of enemies to spawn per wave
+    local enemiesPerWave = 10
+
+    -- Spawn interval in seconds
+    local spawnInterval = 1
+
+    -- Increment the timer
+    enemy.spawnTimer = enemy.spawnTimer + dt
+
+    -- Check if it's time to spawn a new wave
+    if enemy.spawnTimer >= spawnInterval then
+        for i = 1, enemiesPerWave do
+            -- Spawn an enemy
+            enemy.spawnEnemy(screenWidth, screenHeight)
+            enemy.pickEnemyStrategy()
+        end
+
+        -- Reset the timer
+        enemy.spawnTimer = 0
+    end
+    
+end
+
 
 
 return enemy
