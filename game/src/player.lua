@@ -1,6 +1,5 @@
 local anim8 = require 'libs/anim8'
 local ObjectPool = require 'patterns/objectPool'
-print("Obj Pool: ", ObjectPool)
 
 local Player = {}
 
@@ -14,7 +13,8 @@ function Player:load(screenWidth, screenHeight, frameWidth, frameHeight, playerS
     self.pressed = false
     
     self.sprites = {
-        playerWalkSheet = love.graphics.newImage('assets/imgs/playerWalkSheet.png'),
+        --playerWalkSheet = love.graphics.newImage('assets/imgs/playerWalkSheet.png'),
+        playerWalkSheet = love.graphics.newImage('assets/imgs/playerWalkSheet2.png'),
         fullHPBar = love.graphics.newImage('assets/imgs/FullHeart.png'),
         emptyHPBar = love.graphics.newImage('assets/imgs/EmptyHeart.png')
     }
@@ -54,9 +54,31 @@ function Player:load(screenWidth, screenHeight, frameWidth, frameHeight, playerS
         walkUp = anim8.newAnimation(grid('3-4', 3), 0.1),
         walkLeft = anim8.newAnimation(grid('4-4', 4), 0.1),
         currWalk = anim8.newAnimation(grid('1-4', 1), 0.1),
+        -- Sword attack animations
+        attackDown = anim8.newAnimation(grid('1-2', 5), 0.1),
+        attackUp = anim8.newAnimation(grid('1-2', 6), 0.1),
+        attackRight = anim8.newAnimation(grid('1-2', 7), 0.1),
+        attackLeft = anim8.newAnimation(grid('1-2', 8), 0.1),
+
     }
     --default animation
     self.animations.currWalk = self.animations.idle
+
+    -- track player direction
+    self.direction = "down"
+end
+
+function Player:attack()
+    if self.direction == "up" then
+        self.animations.currWalk = self.animations.attackUp
+    elseif self.direction == "down" then
+        self.animations.currWalk = self.animations.attackDown
+    elseif self.direction == "left" then
+        self.animations.currWalk = self.animations.attackLeft
+    elseif self.direction == "right" then
+        self.animations.currWalk = self.animations.attackRight
+    end
+    
 end
 
 function Player:takeDamage()
