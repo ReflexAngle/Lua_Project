@@ -11,12 +11,18 @@ function Player:load(screenWidth, screenHeight, frameWidth, frameHeight, playerS
     self.playerScaler = playerScaler
     self.dragging = false
     self.pressed = false
+    -- sword properties
+    self.swordActive = false
+    self.swordVisible = false
+    self.swordX, self.swordY = 0, 0
+    self.swordAngle = 0
     
     self.sprites = {
         --playerWalkSheet = love.graphics.newImage('assets/imgs/playerWalkSheet.png'),
         playerWalkSheet = love.graphics.newImage('assets/imgs/playerWalkSheet2.png'),
         fullHPBar = love.graphics.newImage('assets/imgs/FullHeart.png'),
-        emptyHPBar = love.graphics.newImage('assets/imgs/EmptyHeart.png')
+        emptyHPBar = love.graphics.newImage('assets/imgs/EmptyHeart.png'),
+        sword = love.graphics.newImage('assets/imgs/sword2.png')
     }
 
     --ObjectPooling for hearts
@@ -69,8 +75,17 @@ function Player:load(screenWidth, screenHeight, frameWidth, frameHeight, playerS
 end
 
 function Player:attack()
+    self.swordActive = true
+    self.swordVisible = true
+
+
     if self.direction == "up" then
         self.animations.currWalk = self.animations.attackUp
+       
+        --sword effects
+        self.swordX = self.transform.x + self.transform.width / 2
+        self.swordY = self.transform.y + 10
+        self.swordAngle = (0.5 * math.pi - math.rad(60)) + math.pi
     elseif self.direction == "down" then
         self.animations.currWalk = self.animations.attackDown
     elseif self.direction == "left" then
@@ -90,7 +105,18 @@ function Player:heal()
 end
 
 function Player:update(dt)
-    self.animations.currWalk:update(dt)    
+    self.animations.currWalk:update(dt) 
+    
+    if (self.animations.currWalk == self.animations.attackUp or
+    self.animations.currWalk == self.animations.attackDown or
+    self.animations.currWalk == self.animations.attackLeft or
+    self.animations.currWalk == self.animations.attackRight) and
+    self.animations.currWalk.position >= #self.animations.currWalk.frames then
+
+        self.swordVisible = false
+        --self.animations.currWalk = self.animations.idle
+        self.active = false
+    end
 end
 
 
@@ -124,6 +150,16 @@ function Player:draw(offsetX, offsetY, scaledWidth, scaledHeight)
     self.playerScaler,
     self.playerScaler)
     
+
+    if self.swordVisible and self.swordActive then
+        love.graphics.draw(
+        self.sprites.sword,
+        self.swordX,
+        self.swordY,
+        self.swordAngle,
+        self.playerScaler,
+        self.playerScaler)
+    end
 end
 
 return Player

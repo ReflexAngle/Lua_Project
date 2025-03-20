@@ -5,7 +5,7 @@ local Slash = {}
 
 function Slash:load()
     self.image = love.graphics.newImage('assets/imgs/Slashhh.png')
-    self.swordImg = love.graphics.newImage('assets/imgs/Sword.png')
+    self.swordImg = love.graphics.newImage('assets/imgs/sword2.png')
 
     local imgWidth = self.image:getWidth()
     local imgHeight = self.image:getHeight()
@@ -88,7 +88,7 @@ function Slash:draw()
 
     -- draws swordimg
     if self.swordActive then
-        love.graphics.draw(self.swordImg, self.swordX, self.swordY, self.angle - 90, 1, 1, self.swordImg:getWidth() / 3, self.swordImg:getHeight() / 3)
+        
     end
 end
 
