@@ -4,6 +4,8 @@ local DrawEnemy1 = require("strategies.enemyOne")
 local DrawEnemy2 = require("strategies.enemyTwo")
 local DrawEnemy3 = require("strategies.enemyThree")
 
+local EnemyEvents = require("eventManager")
+
 local strategies = { DrawEnemy1, DrawEnemy2, DrawEnemy3 }
 enemy.currentStrategy = nil
 
@@ -46,6 +48,9 @@ end
 function enemy.RayCast(x1,y1,x2,y2, obstacles)
     -- should return true if there is a collision
     -- else, return false
+
+    local steps
+    
     local dx = x2 - x1
     local dy = y2 - y1
     local distance = math.max(math.abs(dx), math.abs(dy))
@@ -67,11 +72,10 @@ function enemy.RayCast(x1,y1,x2,y2, obstacles)
     end
 end
 
--- spawns the enemies a distance off the camera
--- should use the Object Pool pattern to decide the enemies
-function enemy.EnemyObjectPool()
-    local currentEnemy
+function enemy.EnemySpawnerAmount()
+    
 end
+
 function enemy.spawnEnemy(screenWidth, screenHeight)
     local side = math.random(1,4)
 

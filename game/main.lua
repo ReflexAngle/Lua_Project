@@ -29,7 +29,7 @@ local frameHeight = 32
 local playerScaler = 3 -- scales player sprites
 
 -- player data file 
-local function loadPlayerData()
+function loadPlayerData()
     if not love.filesystem.getInfo("playerdata", "directory") then
         love.filesystem.createDirectory("playerdata")
     end
@@ -54,8 +54,13 @@ end
 
 function love.load() -- This runs once at the start of the game
     -- create a player data file
-    local playerData = loadPlayerData()
+    loadPlayerData()
+    -- Seed the random number generator because aparently it's not seeded by default 
+    -- like in other languages
+    math.randomseed(os.time()) 
+
     enemy.pickEnemyStrategy() -- Pick a random strategy
+
     -- fonts
     local font = love.graphics.newFont(16)
     love.graphics.setFont(font)
