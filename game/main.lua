@@ -56,6 +56,11 @@ function love.load() -- This runs once at the start of the game
     -- create a player data file
     local playerData = loadPlayerData()
     enemy.pickEnemyStrategy() -- Pick a random strategy
+
+-- Seed the random number generator because aparently it's not seeded by default 
+    -- like in other languages
+    math.randomseed(os.time()) 
+
     -- fonts
     local font = love.graphics.newFont(16)
     love.graphics.setFont(font)
