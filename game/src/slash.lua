@@ -4,11 +4,10 @@ local player= require 'src.player'
 local Slash = {}
 
 function Slash:load()
-    self.image = love.graphics.newImage('assets/imgs/sliceAnim.png')
+    self.image = love.graphics.newImage('assets/imgs/Slashhh.png')
   
     local imgWidth = self.image:getWidth()
     local imgHeight = self.image:getHeight()
-    
     local frameWidth = imgWidth / 2
     local frameHeight = imgHeight
    
@@ -20,7 +19,7 @@ function Slash:load()
     imgHeight
 )
     
-    self.animation = anim8.newAnimation(grid('1-1', 1), 0.2) -- Adjust based on your frames
+    self.animation = anim8.newAnimation(grid('1-2', 1), 0.1) -- Adjust based on your frames
     self.active = false
     self.x, self.y = 0, 0
     self.angle = 0
@@ -30,7 +29,7 @@ function Slash:activate(player)
     self.x, self.y = player.transform.x + player.transform.width / 2, player.transform.y + player.transform.height / 2
     self.active = true
     self.scale = player.playerScaler * 1  -- Adjust scale proportionally
-    --self.animation:gotoFrame(1)  -- Reset animation
+    self.animation:gotoFrame(1)  -- Reset animation
 
     -- Adjust rotation angle based on player direction
     local offset = 30 -- offset slash from player body
@@ -53,6 +52,10 @@ end
 function Slash:update(dt)
     if self.active then
        self.animation:update(dt)
+    end
+
+    if self.animation.position == #self.animation.frames then
+        self.active = false  -- Disable the slash after one cycle
     end
 end
 
