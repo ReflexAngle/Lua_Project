@@ -7,7 +7,7 @@ local DrawEnemy3 = require("strategies.enemyThree")
 local strategies = { DrawEnemy1, DrawEnemy2, DrawEnemy3 }
 enemy.currentStrategy = nil
 
-local enemySpeed = 0
+enemy.enemySpeed = 0
 local enemyHealth = nil
 enemy.x = 0
 enemy.y = 0
@@ -26,20 +26,7 @@ function enemy.DrawEnemy()
         print("No strategy selected!")
     end
 end
--- function  enemy.DrawEnemy2()
---     enemySpeed = 50
---     enemyHealth = 200
---     love.graphics.rectangle("fill",enemy.x, enemy.y,10,10)
---     love.graphics.setColor(255,0,0)
-    
--- end
--- function enemy.DrawEnemy3()
---     enemySpeed = 200
---     enemyHealth = 50
---     love.graphics.rectangle("fill",enemy.x, enemy.y,10,10)
---     love.graphics.setColor(0,255,0)
-    
--- end
+
 
 function enemy.EnemyMove(playerX, playerY, dt)
     local dx = playerX - enemy.x
@@ -47,8 +34,8 @@ function enemy.EnemyMove(playerX, playerY, dt)
 
     local normDx, normDy = normalize.NormalizedVector(dx, dy)
 
-    enemy.x = enemy.x + normDx * enemySpeed * dt
-    enemy.y = enemy.y + normDy * enemySpeed * dt
+    enemy.x = enemy.x + normDx * enemy.enemySpeed * dt
+    enemy.y = enemy.y + normDy * enemy.enemySpeed * dt
     -- local distance = math.sqrt(dx * dx + dy * dy)
 
     -- if distance > 0 then
