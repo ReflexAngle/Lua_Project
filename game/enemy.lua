@@ -1,31 +1,45 @@
 local enemy = {}
+
+local DrawEnemy1 = require("strategies.enemyOne")
+local DrawEnemy2 = require("strategies.enemyTwo")
+local DrawEnemy3 = require("strategies.enemyThree")
+
+local strategies = { DrawEnemy1, DrawEnemy2, DrawEnemy3 }
+enemy.currentStrategy = nil
+
 local enemySpeed = 0
 local enemyHealth = nil
 enemy.x = 0
 enemy.y = 0
 
+function enemy.pickEnemyStrategy()
+    local strategyIndex = math.random(1, #strategies)
+    enemy.currentStrategy = strategies[strategyIndex]
+end
+
 local normalize = require("normalization")
 
 function enemy.DrawEnemy()
-    enemySpeed = 100
-    enemyHealth = 100
-    love.graphics.rectangle("fill",enemy.x, enemy.y,10,10)
-    
+    if enemy.currentStrategy then
+        enemy.currentStrategy.execute(enemy)
+    else
+        print("No strategy selected!")
+    end
 end
-function  enemy.DrawEnemy2()
-    enemySpeed = 50
-    enemyHealth = 200
-    love.graphics.rectangle("fill",enemy.x, enemy.y,10,10)
-    love.graphics.setColor(255,0,0)
+-- function  enemy.DrawEnemy2()
+--     enemySpeed = 50
+--     enemyHealth = 200
+--     love.graphics.rectangle("fill",enemy.x, enemy.y,10,10)
+--     love.graphics.setColor(255,0,0)
     
-end
-function enemy.DrawEnemy3()
-    enemySpeed = 200
-    enemyHealth = 50
-    love.graphics.rectangle("fill",enemy.x, enemy.y,10,10)
-    love.graphics.setColor(0,255,0)
+-- end
+-- function enemy.DrawEnemy3()
+--     enemySpeed = 200
+--     enemyHealth = 50
+--     love.graphics.rectangle("fill",enemy.x, enemy.y,10,10)
+--     love.graphics.setColor(0,255,0)
     
-end
+-- end
 
 function enemy.EnemyMove(playerX, playerY, dt)
     local dx = playerX - enemy.x
@@ -93,15 +107,6 @@ function enemy.spawnEnemy(screenWidth, screenHeight)
     print(side)
 end
 
-function enemy.pickEnemyStrategy()
-    local strategy = math.random(1,3)
-    if strategy == 1 then
-        enemy.DrawEnemy()
-    elseif strategy == 2 then
-        enemy.DrawEnemy2()
-    elseif strategy == 3 then
-        enemy.DrawEnemy3()
-    end
-end
+
 return enemy
 
