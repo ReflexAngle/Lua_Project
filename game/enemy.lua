@@ -4,7 +4,6 @@ local enemylist = {}
 local DrawEnemy1 = require("strategies.enemyOne")
 local DrawEnemy2 = require("strategies.enemyTwo")
 local DrawEnemy3 = require("strategies.enemyThree")
-
 local EnemyEvents = require("eventManager")
 
 local strategies = { DrawEnemy1, DrawEnemy2, DrawEnemy3 }
@@ -76,7 +75,11 @@ function enemy.RayCast(x1,y1,x2,y2, obstacles)
 end
 
 function enemy.EnemySpawnerAmount()
-    
+    -- handles the amout of enemies that spawn
+    -- based on the amount form the eventManager
+    -- after each wave the amount of enemies increases in the eventManager
+
+    local enemyAmount = EnemyEvents.getEnemyAmount()
 end
 
 function enemy.spawnEnemy(screenWidth, screenHeight)
@@ -129,6 +132,11 @@ function enemy.EnemyWaveHandling(dt, screenWidth, screenHeight)
         enemy.spawnTimer = 0
     end
     
+end
+
+function enemy.HandleEnemyAttack()
+    -- if enemy is within range of player, attack
+    -- else, move towards player
 end
 
 

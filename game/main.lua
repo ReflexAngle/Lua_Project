@@ -6,8 +6,8 @@ local screenHeight = love.graphics.getHeight() -- Gets the screen height
 local player = require("src.player") -- player class
 local slash = require("src.slash") -- slash class
 local drag = require("src.drag") -- drag class
-local json = require("libs.dkjson") -- json library
 local enemy = require("enemy") -- load the enemy thing
+local jason = require("src.loadGameData")
 local normalize = require("normalization") -- load the normalization thing
 local cameraFollow = require("cameraFollow") -- load the camera follow thing
 
@@ -28,33 +28,11 @@ local frameWidth = 16
 local frameHeight = 32
 local playerScaler = 3 -- scales player sprites
 
--- player data file 
-function LoadPlayerData()
-    if not love.filesystem.getInfo("playerdata", "directory") then
-        love.filesystem.createDirectory("playerdata")
-    end
 
-    local filePath = "playerdata/player_data.json"
-
-    if love.filesystem.getInfo(filePath) then
-        local jsonData = love.filesystem.read(filePath)
-        return json.decode(jsonData)
-    else
-        local defaultData = {
-            health = 100,
-            maxHealth = 100,
-            position = { x = 0, y = 0 }
-        }
-
-        local encodedData = json.encode(defaultData)
-        love.filesystem.write(filePath, encodedData)
-        return defaultData
-    end
-end
 
 function love.load() -- This runs once at the start of the game
     -- create a player data file
-    LoadPlayerData()
+    jason.LoadPlayerData()
     -- Seed the random number generator because aparently it's not seeded by default 
     -- like in other languages
     math.randomseed(os.time()) 
@@ -139,6 +117,7 @@ function love.update(dt)
     enemy.EnemyMove(player.transform.x, player.transform.y, dt)
     
     cameraFollow.FollowPlayer(player)
+
 end
 
 function love.draw() -- draws graphics
