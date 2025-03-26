@@ -12,3 +12,24 @@
 upgrade station
 enemies drop powerups and cash
 boss fights
+
+Needs
+Design patterns
+Melea weapons
+Enemies
+Upgrades
+Map
+Sprites
+Fail state
+Win state
+Bosses
+Character selection
+
+
+
+Wants
+Range weapons
+Friendly NPCs
+Fail state other than dying 
+Inventory 
+Roll
