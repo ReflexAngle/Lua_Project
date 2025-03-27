@@ -1,5 +1,5 @@
 local anim8 = require 'libs/anim8'
-local ObjectPool = require 'patterns/objectPool'
+local ObjectPool = require 'scripts/designPatterns/objectPool'
 
 local Player = {}
 
@@ -19,10 +19,10 @@ function Player:load(screenWidth, screenHeight, frameWidth, frameHeight, playerS
     
     self.sprites = {
         --playerWalkSheet = love.graphics.newImage('assets/imgs/playerWalkSheet.png'),
-        playerWalkSheet = love.graphics.newImage('assets/imgs/playerWalkSheet2.png'),
-        fullHPBar = love.graphics.newImage('assets/imgs/FullHeart.png'),
-        emptyHPBar = love.graphics.newImage('assets/imgs/EmptyHeart.png'),
-        sword = love.graphics.newImage('assets/imgs/sword2.png')
+        playerWalkSheet = love.graphics.newImage('sprites/player/playerWalkSheet2.png'),
+        fullHPBar = love.graphics.newImage('sprites/items/FullHeart.png'),
+        emptyHPBar = love.graphics.newImage('sprites/items/EmptyHeart.png'),
+        sword = love.graphics.newImage('sprites/items/sword2.png')
     }
 
     --ObjectPooling for hearts
