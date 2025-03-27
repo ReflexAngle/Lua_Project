@@ -1,10 +1,10 @@
 local enemy = {}
 
 local enemylist = {}
-local DrawEnemy1 = require("Strategies.enemyOne")
-local DrawEnemy2 = require("Strategies.enemyTwo")
-local DrawEnemy3 = require("Strategies.enemyThree")
-local EnemyEvents = require("eventManager")
+local DrawEnemy1 = require("scripts.enemies.Strategies.enemyOne")
+local DrawEnemy2 = require("scripts.enemies.Strategies.enemyTwo")
+local DrawEnemy3 = require("scripts.enemies.Strategies.enemyThree")
+local EnemyEvents = require("scripts.events.saveDataEvent")
 
 local strategies = { DrawEnemy1, DrawEnemy2, DrawEnemy3 }
 enemy.currentStrategy = nil
@@ -21,7 +21,7 @@ function enemy.pickEnemyStrategy()
     enemy.currentStrategy = strategies[strategyIndex]
 end
 
-local normalize = require("normalization")
+local normalize = require("scripts.math.normalization")
 
 function enemy.DrawEnemy()
     if enemy.currentStrategy then
