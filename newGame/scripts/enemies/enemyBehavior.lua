@@ -5,6 +5,7 @@ local DrawEnemy1 = require("scripts.enemies.Strategies.enemyOne")
 local DrawEnemy2 = require("scripts.enemies.Strategies.enemyTwo")
 local DrawEnemy3 = require("scripts.enemies.Strategies.enemyThree")
 local EnemyEvents = require("scripts.events.saveDataEvent")
+local waveProperties = require("scripts.events.waveProperties")
 
 local strategies = { DrawEnemy1, DrawEnemy2, DrawEnemy3 }
 enemy.currentStrategy = nil
