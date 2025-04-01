@@ -1,68 +1,59 @@
-local saveData = require("scripts/events/saveDataEvent")
-local cameraFollow = require("scripts/camera/cameraFollow")
-local normalize = require("scripts/math/normalization")
-local player = require("scripts/entities/player")
-local enemy = require("scripts/enemies/enemyBehavior")
-
-
--- setting bg sprites
+--local saveData = require("scripts/events/saveDataEvent")
+--local cameraFollow = require("scripts/camera/cameraFollow")
+--local normalize = require("scripts/math/normalization")
+--local enemy = require("scripts/enemies/enemyBehavior")
+-- setting bg sprites   
 --local sprites = {
---    background = love.graphics.newImage("assets/imgs/background.png"),
---}
-
--- scaling and sizing
---local bgWidth = sprites.background:getWidth()
---local bgHeight = sprites.background:getHeight()
---local scale = math.min(screenWidth / 10, screenHeight / 10)
---local scaledWidth = 10 * scale
---local scaledHeight = bgHeight * scale
---local offsetX = (screenWidth - scaledWidth) / 2
---local offsetY = (screenHeight - scaledHeight) / 2
-local frameWidth = 16
-local frameHeight = 32
-local playerScaler = 3 -- scales player sprites
-
-
-function love.load()
-    local screenWidth = love.graphics.getWidth()
-    local screenHeight = love.graphics.getHeight()
-     player:load(screenWidth, screenHeight, frameWidth, frameHeight, playerScaler)
-     --slash:load()
+    --    background = love.graphics.newImage("assets/imgs/background.png"),
+    --}
+    
+    
+    
+    
+    function love.load()
+        require("src/startup/gameStart")
+        gameStart()
+        
+        colliderToggle = false
+        local Player = require("src/entities/player")
+        player = Player:new(world, 500, 400, 16, 16, 8)
+--    --createNewSave()
 end
 
 function love.update(dt)
+    --updateAll(dt)
+    world:update(dt)
+    if player and player.update then
+       player:update(dt) end
+end
     
-    --keyboard movement
-        if love.keyboard.isDown("right") or love.keyboard.isDown("d") then
-            --player.transform.x = player.transform.x + player.walkSpeed
-            dx = dx + 1
-            player.animations.currWalk = player.animations.walkRight
-            player.direction = "right"
-        end
-    
-        if love.keyboard.isDown("left") or love.keyboard.isDown("a") then
-            --player.transform.x = player.transform.x - player.walkSpeed
-            dx = dx - 1
-            player.animations.currWalk = player.animations.walkLeft
-            player.direction = "left"
-        end
-    
-        if love.keyboard.isDown("up") or love.keyboard.isDown("w") then
-            --player.transform.y = player.transform.y - player.walkSpeed
-            dy = dy - 1
-            player.animations.currWalk = player.animations.walkUp
-            player.direction = "up"
-        end
-    
-        if love.keyboard.isDown("down") or love.keyboard.isDown("s") then
-            --player.transform.y = player.transform.y + player.walkSpeed
-            dy = dy + 1
-            player.animations.currWalk = player.animations.walkDown
-            player.direction = "down"
-        end
+function love.draw()
+    -- draw  before camera method
+    -- cam:attach()
+    -- drawCamera()
+    if colliderToggle and world.draw then
+        world:draw()
+        --particleWorld:draw()
+    end
+    if player and player.draw then
+       player:draw(0,0,0,0)
+
+    end
+    if player and player.drawHearts then
+       player:drawHearts()
+    end
+    --cam:detach()
+    -- draw after cam method
 end
 
-function love.draw()
-    player:draw(offsetX, offsetY, scaledWidth, scaledHeight)
-    player:drawHearts()
+--player:draw(offsetX, offsetY, scaledWidth, scaledHeight)
+--player:drawHearts()
+
+function love.keypressed(key)
+    if key == "escape" then
+        love.event.quit()
+    elseif key == "f12" then
+        local isFullscreen = love.window.getFullscreen()
+        love.window.setFullscreen(not isFullscreen)
+    end
 end
