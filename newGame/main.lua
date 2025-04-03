@@ -61,5 +61,10 @@ function love.keypressed(key)
 
     elseif key == "f9" then -- Or any key you prefer
         colliderToggle = not colliderToggle
+
+    elseif key == "space" then -- Or "k", "z", etc.
+        if player and player.attack then -- Check if player and the method exist
+           player:attack()
+        end
     end
 end

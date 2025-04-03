@@ -23,11 +23,23 @@ function Player:new(world, x, y, width, height, colliderRadius)
     self.dirY = 1
     self.prevDirX = 1
     self.prevDirY = 1
-    self.state = 0
     self.walking = false
     self.aiming = false
     self.speed = 200  -- default should be 75
     self.scaleX = 2
+    
+    -- -99 = dead
+    -- -1 = inactive/idle
+    -- 0 = Normal gameplay
+    -- 0.5 = Rolling
+    -- 1 = Sword swingin
+    -- 2 = Use (bomb)
+    -- 3 = Bow (3: bow drawn, 3.1: recover)
+    -- 4 = grapple (4: armed, 4.1: launching, 4.2: moving)
+    -- 10 = Damage stun
+    -- 11 = Hold item
+    -- 12 = Transition
+    self.state = 0
 
     -- Health
     self.max_hearts = 5
@@ -69,40 +81,21 @@ function Player:new(world, x, y, width, height, colliderRadius)
     return self
 end
 
+
+
 function Player:update(dt)
 
-    if self.state == -1 then return end
+    if self.state == -1 then return end -- if player idle do nothing
 
-    if self.state == 0 then 
+    if self.state == 0 then  -- if player is playing do movement 
        self:handleMovementAndAnimation()
-    elseif self.state == 1 then
+    elseif self.state == 1 then -- if play attacks 
         self:handleAttackAnimation(dt)
         -- try to prevent movement and keep the sword in diagonal pos to player
     end
 
-
-    -- if self.state == 99 then return end
-
-    -- if self.state == 0 then
-        
-    --     self.prevDirX = self.dirX
-    --     self.prevDirY = self.dirY
-
-    --     local dirX, dirY = 0, 0
-    --     if dirX == 0 and dirY == 0 then
-    --         self.walking = false
-    --         self.animations.currentAnimation = self.animations.idle
-    --     else
-    --         self.animations.currentAnimation = self.animations.idle
     
-    --     end
-    --     if dirY == 0 and dirX ~= 0 then self.dirY = 1 end
-    
-    --     local vec = { x = dirX * self.speed, y = dirY * self.speed }
-    --     self.collider:setLinearVelocity(vec.x, vec.y)
-    -- end
-    
-    --self.animations.currentAnimation:update(dt)
+    self.animations.currentAnimation:update(dt)
 end
 
 function Player:draw(offsetX, offsetY, scaledWidth, scaledHeight)
@@ -127,6 +120,34 @@ function Player:drawHearts()
     end
 end
 
+function Player:attack()
+    -- Use 'not self.aiming' instead of '!player.aiming'
+    if self.state == 0 and not self.aiming then
+        print("Player: Attack triggered!") -- Keep for debugging
+
+        self.state = 1 -- Set state to attacking
+        self.collider:setLinearVelocity(0, 0) -- Stop movement
+
+        -- Select correct attack animation based on facing direction
+        if self.dirY > 0 then -- Facing Down
+            self.currentAnimation = self.animations.attackDown
+        elseif self.dirY < 0 then -- Facing Up
+            self.currentAnimation = self.animations.attackUp
+        elseif self.dirX < 0 then -- Facing Left
+            self.currentAnimation = self.animations.attackLeft
+        elseif self.dirX > 0 then -- Facing Right
+            self.currentAnimation = self.animations.attackRight
+        else -- Default case
+            self.currentAnimation = self.animations.attackDown
+        end
+
+        -- Reset the animation to the beginning
+        if self.currentAnimation then -- Check if animation exists
+            self.currentAnimation:gotoFrame(1)
+        end
+    end
+end
+
 function Player:takeDamage()
     self.hearts = math.max(0, self.hearts - 1)
 end
@@ -138,10 +159,25 @@ end
 
 function Player:handleMovementAndAnimation()
     local moveX, moveY = 0, 0
-         if love.keyboard.isDown("d") or love.keyboard.isDown("right") then moveX = 1 end
-         if love.keyboard.isDown("a") or love.keyboard.isDown("left") then moveX = -1 end
-         if love.keyboard.isDown("s") or love.keyboard.isDown("down") then moveY = 1 end
-         if love.keyboard.isDown("w") or love.keyboard.isDown("up") then moveY = -1 end
+         if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
+            moveX = 1 
+            self.animations.currentAnimation = self.animations.walkRight    
+            end
+
+         if love.keyboard.isDown("a") or love.keyboard.isDown("left") then 
+            moveX = -1
+            self.animations.currentAnimation = self.animations.walkLeft    
+            end
+
+         if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
+            moveY = 1
+            self.animations.currentAnimation = self.animations.walkDown
+            end
+
+         if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
+            moveY = -1
+            self.animations.currentAnimation = self.animations.walkUp    
+            end
 
         --  Use the function from your normalize module ***
             moveX, moveY = normalize.NormalizedVector(moveX, moveY) -- Call the function
@@ -153,23 +189,6 @@ function Player:handleMovementAndAnimation()
             -- Update facing direction (stores the last non-zero direction)
             if moveX ~= 0 then self.dirX = moveX end
             if moveY ~= 0 then self.dirY = moveY end
-
-            -- Combine animation selection directly with movement check
-            if moveX == 0 and moveY == 0 then
-                -- Not moving: Set animation to idle
-                self.currentAnimation = self.animations.idle
-            else
-                -- Moving: Select appropriate walking animation (vertical priority)
-                if moveY > 0 then
-                    self.currentAnimation = self.animations.walkDown
-                elseif moveY < 0 then
-                    self.currentAnimation = self.animations.walkUp
-                elseif moveX > 0 then
-                    self.currentAnimation = self.animations.walkRight
-                elseif moveX < 0 then
-                    self.currentAnimation = self.animations.walkLeft
-                end
-            end
         end
 
 return Player
