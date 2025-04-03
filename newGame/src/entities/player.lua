@@ -67,10 +67,10 @@ function Player:new(world, x, y, width, height, colliderRadius)
     local grid = anim8.newGrid(16, 32, self.sprites.playerWalkSheet:getWidth(), self.sprites.playerWalkSheet:getHeight())
     self.animations = {
         idle = anim8.newAnimation(grid('1-1', 1), 0.1),
-        walkDown = anim8.newAnimation(grid('1-4', 1), 0.1),
-        walkRight = anim8.newAnimation(grid('2-4', 2), 0.1),
         walkUp = anim8.newAnimation(grid('3-4', 3), 0.1),
-        walkLeft = anim8.newAnimation(grid('4-4', 4), 0.1),
+        walkDown = anim8.newAnimation(grid('1-4', 1), 0.1),
+        walkLeft = anim8.newAnimation(grid('1-4', 4), 0.1),
+        walkRight = anim8.newAnimation(grid('2-4', 2), 0.1),
         attackDown = anim8.newAnimation(grid('1-2', 5), 0.1),
         attackUp = anim8.newAnimation(grid('1-2', 6), 0.1),
         attackRight = anim8.newAnimation(grid('1-2', 7), 0.1),
