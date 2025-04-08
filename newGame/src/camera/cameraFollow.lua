@@ -7,8 +7,8 @@ local camera = {
 }
 
 function cameraFollow.FollowPlayer(player)
-    camera.x = player.transform.x - love.graphics.getWidth() / 2
-    camera.y = player.transform.y - love.graphics.getHeight() / 2
+    camera.x = player.collider:getX() - (love.graphics.getWidth() / 2) / camera.scale
+    camera.y = player.collider:getY() - (love.graphics.getHeight() / 2) / camera.scale
 
 end
 

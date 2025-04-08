@@ -1,5 +1,5 @@
 --local saveData = require("scripts/events/saveDataEvent")
---local cameraFollow = require("scripts/camera/cameraFollow")
+local cameraFollow = require("src/camera/cameraFollow")
 --local normalize = require("scripts/math/normalization")
 --local enemy = require("scripts/enemies/enemyBehavior")
 -- setting bg sprites   
@@ -25,9 +25,14 @@ function love.update(dt)
     world:update(dt)
     if player and player.update then
        player:update(dt) end
+    
+    if player then
+        cameraFollow.FollowPlayer(player)
+    end
 end
     
 function love.draw()
+    cameraFollow.Apply()
     -- draw  before camera method
     -- cam:attach()
     -- drawCamera()
@@ -44,6 +49,8 @@ function love.draw()
     end
     --cam:detach()
     -- draw after cam method
+    cameraFollow.Reset()
+
 end
 
 --player:draw(offsetX, offsetY, scaledWidth, scaledHeight)
