@@ -44,12 +44,14 @@ function love.draw()
        player:draw()
 
     end
-    if player and player.drawHearts then
-       player:drawHearts()
-    end
+    
     --cam:detach()
     -- draw after cam method
     cameraFollow.Reset()
+
+    if player and player.drawHearts then
+        player:drawHearts()
+     end
 
 end
 
