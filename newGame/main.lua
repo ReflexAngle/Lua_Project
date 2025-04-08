@@ -1,7 +1,7 @@
 --local saveData = require("scripts/events/saveDataEvent")
 local cameraFollow = require("src/camera/cameraFollow")
 --local normalize = require("scripts/math/normalization")
---local enemy = require("scripts/enemies/enemyBehavior")
+local enemy = require("src/enemies/enemyBehavior")
 -- setting bg sprites   
 --local sprites = {
     --    background = love.graphics.newImage("assets/imgs/background.png"),
@@ -10,14 +10,17 @@ local cameraFollow = require("src/camera/cameraFollow")
     
     
     
-    function love.load()
-        require("src/startup/gameStart")
-        gameStart()
+function love.load()
+    require("src/startup/gameStart")
+    gameStart()
         
-        colliderToggle = false
-        local Player = require("src/entities/player")
-        player = Player:new(world, 500, 400, 16, 32, 8)
+    colliderToggle = false
+    local Player = require("src/entities/player")
+    player = Player:new(world, 500, 400, 16, 32, 8)
 --    --createNewSave()
+
+    enemySpawnTimer = 0
+    enemySpawnInterval = 2 -- Spawn an enemy every 2 seconds
 end
 
 function love.update(dt)
@@ -25,9 +28,18 @@ function love.update(dt)
     world:update(dt)
     if player and player.update then
        player:update(dt) end
+
+    enemySpawnTimer = enemySpawnTimer + dt
+    if enemySpawnTimer >= enemySpawnInterval then
+       enemy.spawnEnemy(love.graphics.getWidth(), love.graphics.getHeight())
+       enemySpawnTimer = 0
+    end
     
     if player then
         cameraFollow.FollowPlayer(player)
+    end
+    if player then
+        enemy.EnemyMove(player.collider:getX(), player.collider:getY(), dt)
     end
 end
     
@@ -44,6 +56,7 @@ function love.draw()
        player:draw()
 
     end
+    enemy.DrawEnemy()
     
     --cam:detach()
     -- draw after cam method

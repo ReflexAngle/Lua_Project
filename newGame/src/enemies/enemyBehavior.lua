@@ -1,10 +1,10 @@
 local enemy = {}
 
 local enemylist = {}
-local DrawEnemy1 = require("scripts.enemies.Strategies.enemyOne")
-local DrawEnemy2 = require("scripts.enemies.Strategies.enemyTwo")
-local DrawEnemy3 = require("scripts.enemies.Strategies.enemyThree")
-local EnemyEvents = require("scripts.events.saveDataEvent")
+local DrawEnemy1 = require("src.enemies.Strategies.enemyOne")
+local DrawEnemy2 = require("src.enemies.Strategies.enemyTwo")
+local DrawEnemy3 = require("src.enemies.Strategies.enemyThree")
+local EnemyEvents = require("src.events.saveDataEvent")
 --local waveProperties = require("scripts.events.waveProperties")
 
 local strategies = { DrawEnemy1, DrawEnemy2, DrawEnemy3 }
@@ -22,25 +22,29 @@ function enemy.pickEnemyStrategy()
     enemy.currentStrategy = strategies[strategyIndex]
 end
 
-local normalize = require("scripts.math.normalization")
+local normalize = require("src.math.normalization")
 
 function enemy.DrawEnemy()
-    if enemy.currentStrategy then
-        enemy.currentStrategy.execute(enemy)
-    else
-        print("No strategy selected!")
+    for _, e in ipairs(enemylist) do
+        if e.strategy and e.strategy.execute then
+            e.strategy.execute(e) -- Use the enemy's strategy to draw it
+        else
+            print("No strategy selected for enemy!") -- Debugging message
+        end
     end
 end
 
 
 function enemy.EnemyMove(playerX, playerY, dt)
-    local dx = playerX - enemy.x
-    local dy = playerY - enemy.y
+    for _, e in ipairs(enemylist) do
+        local dx = playerX - e.x
+        local dy = playerY - e.y
 
-    local normDx, normDy = normalize.NormalizedVector(dx, dy)
+        local normDx, normDy = normalize.NormalizedVector(dx, dy)
 
-    enemy.x = enemy.x + normDx * enemy.enemySpeed * dt
-    enemy.y = enemy.y + normDy * enemy.enemySpeed * dt
+        e.x = e.x + normDx * e.enemySpeed * dt
+        e.y = e.y + normDy * e.enemySpeed * dt
+    end
     -- local distance = math.sqrt(dx * dx + dy * dy)
 
     -- if distance > 0 then
@@ -84,25 +88,55 @@ function enemy.EnemySpawnerAmount()
 end
 
 function enemy.spawnEnemy(screenWidth, screenHeight)
-    local side = math.random(1,4)
+    local side = math.random(1, 4)
+    local x, y
 
     if side == 1 then
-        enemy.x = math.random(0, screenWidth)
-        enemy.y = -20
+        x = math.random(0, screenWidth)
+        y = -20
     elseif side == 2 then
-        -- Spawn below the screen
-        enemy.x = math.random(0, screenWidth)
-        enemy.y = screenHeight + 20
+        x = math.random(0, screenWidth)
+        y = screenHeight + 20
     elseif side == 3 then
-        -- Spawn to the left of the screen
-        enemy.x = -20
-        enemy.y = math.random(0, screenHeight)
+        x = -20
+        y = math.random(0, screenHeight)
     elseif side == 4 then
-        -- Spawn to the right of the screen
-        enemy.x = screenWidth + 20
-        enemy.y = math.random(0, screenHeight)
+        x = screenWidth + 20
+        y = math.random(0, screenHeight)
     end
-    print(side)
+
+    -- Create a new enemy with a random strategy
+    local newEnemy = {
+        x = x,
+        y = y,
+        enemySpeed = 0,
+        enemyHealth = 100,
+        strategy = strategies[math.random(1, #strategies)] -- Assign a random strategy
+    }
+
+    table.insert(enemylist, newEnemy)
+end
+
+function enemy.updateEnemies(playerX, playerY, dt)
+    for _, e in ipairs(enemylist) do
+        -- Move the enemy towards the player
+        local dx = playerX - e.x
+        local dy = playerY - e.y
+        local distance = math.sqrt(dx * dx + dy * dy)
+
+        if distance > 0 then
+            e.x = e.x + (dx / distance) * e.enemySpeed * dt
+            e.y = e.y + (dy / distance) * e.enemySpeed * dt
+        end
+    end
+end
+
+function enemy.drawEnemies()
+    for _, e in ipairs(enemylist) do
+        if e.strategy and e.strategy.execute then
+            e.strategy.execute(e) -- Use the enemy's strategy to draw it
+        end
+    end
 end
 
 -- handels the spawnig of enemies
