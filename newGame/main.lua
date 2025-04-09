@@ -1,5 +1,6 @@
 --local saveData = require("scripts/events/saveDataEvent")
 local cameraFollow = require("src/camera/cameraFollow")
+
 --local normalize = require("scripts/math/normalization")
 local enemy = require("src/enemies/enemyBehavior")
 -- setting bg sprites   
@@ -13,8 +14,9 @@ local enemy = require("src/enemies/enemyBehavior")
 function love.load()
     require("src/startup/gameStart")
     gameStart()
-        
+    LoadMap("TestMap3")
     colliderToggle = false
+        
     local Player = require("src/entities/player")
     player = Player:new(world, 500, 400, 16, 32, 8)
 --    --createNewSave()
@@ -44,6 +46,8 @@ function love.update(dt)
 end
     
 function love.draw()
+    -- draw background
+    love.graphics.draw(sprites.background, 0, 0, 0, love.graphics.getWidth()/sprites.background:getWidth(), love.graphics.getHeight()/sprites.background:getHeight())
     cameraFollow.Apply()
     -- draw  before camera method
     -- cam:attach()

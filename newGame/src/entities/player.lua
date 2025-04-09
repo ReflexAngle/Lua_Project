@@ -13,6 +13,7 @@ function Player:new(world, x, y, width, height, colliderRadius)
 
     -- Create physics collider
     self.collider = world:newBSGRectangleCollider(x, y, width, height, colliderRadius)
+    --self.collider = world:newCircleCollider(dirX, dirY, 1, 1, 50)
     self.collider:setCollisionClass("Player")
     self.collider:setFixedRotation(true)
     self.collider:setLinearDamping(12)
@@ -71,11 +72,14 @@ function Player:new(world, x, y, width, height, colliderRadius)
         walkDown = anim8.newAnimation(grid('1-4', 1), 0.1),
         walkLeft = anim8.newAnimation(grid('1-4', 4), 0.1),
         walkRight = anim8.newAnimation(grid('2-4', 2), 0.1),
+       -- attack anims
         attackDown = anim8.newAnimation(grid('1-2', 5), 0.1),
         attackUp = anim8.newAnimation(grid('1-2', 6), 0.1),
         attackRight = anim8.newAnimation(grid('1-2', 7), 0.1),
         attackLeft = anim8.newAnimation(grid('1-2', 8), 0.1)
     }
+
+      
 
     self.animations.currentAnimation = self.animations.idle
     return self
@@ -90,7 +94,7 @@ function Player:update(dt)
     if self.state == 0 then  -- if player is playing do movement 
        self:handleMovementAndAnimation()
     elseif self.state == 1 then -- if play attacks 
-        self:handleAttackAnimation(dt)
+        self:handleAttackAndAnimation(dt)
         -- try to prevent movement and keep the sword in diagonal pos to player
     end
 

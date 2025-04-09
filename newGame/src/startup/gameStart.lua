@@ -43,8 +43,8 @@ function gameStart()
     world:setQueryDebugDrawing(true)
 
     -- This second world is for particles, and has downward gravity
-     particleWorld = windfield.newWorld(0, 250, false)
-     particleWorld:setQueryDebugDrawing(true)
+     --particleWorld = windfield.newWorld(0, 250, false)
+     --particleWorld:setQueryDebugDrawing(true)
 
 
 end

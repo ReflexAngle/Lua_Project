@@ -50,7 +50,7 @@ function requireAll()
 
     -- Levels
     -- require("src/levels/curtain")
-    -- require("src/levels/loadMap")
+     require("src/levels/loadMap")
     -- require("src/levels/npc")
     -- require("src/levels/transition")
     -- require("src/levels/wall")
