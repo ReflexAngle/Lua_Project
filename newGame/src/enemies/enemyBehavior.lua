@@ -111,6 +111,8 @@ function enemy.spawnEnemy(screenWidth, screenHeight)
         y = y,
         enemySpeed = 0,
         enemyHealth = 100,
+        enemyDamage = 20, -- Default damage
+        attackRange = 50, -- Default attack range
         strategy = strategies[math.random(1, #strategies)] -- Assign a random strategy
     }
 
@@ -169,11 +171,33 @@ function enemy.EnemyWaveHandling(dt, screenWidth, screenHeight)
     
 end
 
-function enemy.HandleEnemyAttack()
-    -- if enemy is within range of player, attack
-    -- else, move towards player
-end
+function enemy.HandleEnemyAttack(player)
+    -- If enemy is within range of player, attack
+    for _, e in ipairs(enemylist) do
+        local playerX = player.collider:getX()
+        local playerY = player.collider:getY()
 
+        local dx = playerX - e.x
+        local dy = playerY - e.y
+        local distance = math.sqrt(dx * dx + dy * dy)
+
+        if distance <= (e.attackRange or 50) then -- Default attack range is 50
+            -- Trigger attack
+            if not e.attackCooldown or e.attackCooldown <= 0 then
+                player:takeDamage(e.enemyDamage) -- Use the player's takeDamage method
+                e.attackCooldown = 1 -- Set a cooldown of 1 second
+
+                -- Print to terminal when the enemy attacks
+                print(string.format("Enemy attacked! Damage dealt: %d", e.enemyDamage))
+            end
+        end
+
+        -- Reduce attack cooldown over time
+        if e.attackCooldown then
+            e.attackCooldown = e.attackCooldown - love.timer.getDelta()
+        end
+    end
+end
 
 
 return enemy

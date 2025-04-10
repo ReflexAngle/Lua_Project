@@ -3,6 +3,7 @@ local cameraFollow = require("src/camera/cameraFollow")
 
 --local normalize = require("scripts/math/normalization")
 local enemy = require("src/enemies/enemyBehavior")
+--local mapLoader = require("src/levels/loadMap")
 -- setting bg sprites   
 --local sprites = {
     --    background = love.graphics.newImage("assets/imgs/background.png"),
@@ -14,7 +15,7 @@ local enemy = require("src/enemies/enemyBehavior")
 function love.load()
     require("src/startup/gameStart")
     gameStart()
-    LoadMap("TestMap3")
+    --mapLoader.loadMap("TestMap3")
     colliderToggle = false
         
     local Player = require("src/entities/player")
@@ -42,12 +43,13 @@ function love.update(dt)
     end
     if player then
         enemy.EnemyMove(player.collider:getX(), player.collider:getY(), dt)
+        enemy.HandleEnemyAttack(player)
     end
 end
     
 function love.draw()
     -- draw background
-    love.graphics.draw(sprites.background, 0, 0, 0, love.graphics.getWidth()/sprites.background:getWidth(), love.graphics.getHeight()/sprites.background:getHeight())
+    --love.graphics.draw(sprites.background, 0, 0, 0, love.graphics.getWidth()/sprites.background:getWidth(), love.graphics.getHeight()/sprites.background:getHeight())
     cameraFollow.Apply()
     -- draw  before camera method
     -- cam:attach()

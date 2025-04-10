@@ -1,4 +1,6 @@
-function loadMap(mapName, destX, destY)
+local mapLoader = {}
+
+function mapLoader.loadMap(mapName, destX, destY)
     destroyAll()
 
     if destX and destY then
@@ -71,3 +73,5 @@ function loadMap(mapName, destX, destY)
     end
 
 end
+
+return mapLoader
