@@ -13,9 +13,11 @@ local enemy = require("src/enemies/enemyBehavior")
     
     
 function love.load()
+    print("game loading")
     require("src/startup/gameStart")
     gameStart()
     --mapLoader.loadMap("TestMap3")
+    loadMap("darkmap")
     colliderToggle = false
         
     local Player = require("src/entities/player")
@@ -29,6 +31,7 @@ end
 function love.update(dt)
     --updateAll(dt)
     world:update(dt)
+    if gameMap then gameMap:update(dt) end
     if player and player.update then
        player:update(dt) end
 
@@ -39,6 +42,7 @@ function love.update(dt)
     end
     
     if player then
+        print("following the player")
         cameraFollow.FollowPlayer(player)
     end
     if player then
@@ -51,6 +55,9 @@ function love.draw()
     -- draw background
     --love.graphics.draw(sprites.background, 0, 0, 0, love.graphics.getWidth()/sprites.background:getWidth(), love.graphics.getHeight()/sprites.background:getHeight())
     cameraFollow.Apply()
+    -- draws gamemap
+    if gameMap then gameMap:draw() end
+
     -- draw  before camera method
     -- cam:attach()
     -- drawCamera()
