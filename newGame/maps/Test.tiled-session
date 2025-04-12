@@ -1,0 +1,50 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "darkmap.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "OverWorld.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "darkmap.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 45.333333333333336,
+                "y": 434.99999999999994
+            }
+        }
+    },
+    "last.exportedFilePath": "C:/Users/valro/Desktop/School 25'/AOOP/Lua_Project/newGame/maps",
+    "last.externalTilesetPath": "C:/Users/valro/Desktop/School 25'/AOOP/Lua_Project/newGame/maps/gfx",
+    "last.imagePath": "C:/Users/valro/Desktop/School 25'/AOOP/Lua_Project/newGame/maps/gfx",
+    "map.height": 30,
+    "map.lastUsedExportFilter": "Lua files (*.lua)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 40,
+    "openFiles": [
+        "darkmap.tmx"
+    ],
+    "project": "Test.tiled-project",
+    "recentFiles": [
+        "darkmap.tmx",
+        "OverWorld.tsx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.lastUsedFilter": "All Files (*)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

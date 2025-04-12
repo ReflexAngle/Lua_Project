@@ -7,16 +7,16 @@
        data.playerX = 0 -- player's X position
        data.playerY = 0 -- player's Y position
 --     data.maxHealth = 4 -- maximum number of hearts
---     data.money = 0 -- amount of currency
+     data.money = 0 -- amount of currency
 --     data.keys = 0 -- number of keys
-       data.map = "" -- currently loaded map
+       data.map = "TestMap4" -- currently loaded map
 --     data.outfit = 1 -- which cloak is equipped
 
 --     if fileNumber == nil then fileNumber = 1 end
 --     data.fileNumber = fileNumber -- which file are we using
 
---     -- Currently, can equip an item to Z and X
---     data.item = {}
+--     -- Currently, can equip an item to Z and X 
+        data.item = {}
 --     data.item.left = "sword"
 --     data.item.right = "bow"
 --     data.item.altL = "fire"
@@ -77,7 +77,7 @@ function loadGame(fileNumber)
         end
     end
 
-    --loadMap(data.map, data.playerX, data.playerY)
+   -- loadMap(data.map, data.playerX, data.playerY)
     player.direction = "down"
     --player.state = 0
     --gamestate = 1

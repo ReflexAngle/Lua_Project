@@ -89,17 +89,45 @@ end
 
 function Player:update(dt)
 
-    if self.state == -1 then return end -- if player idle do nothing
+   -- if self.state == -1 then return end -- if player idle do nothing
 
-    if self.state == 0 then  -- if player is playing do movement 
-       self:handleMovementAndAnimation()
-    elseif self.state == 1 then -- if play attacks 
-        self:handleAttackAndAnimation(dt)
+    --if self.state == 0 then  -- if player is playing do movement 
+   --    self:handleMovementAndAnimation()
+  --  elseif self.state == 1 then -- if play attacks 
+       -- self:handleAttackAndAnimation(dt)
         -- try to prevent movement and keep the sword in diagonal pos to player
+    --end
+
+
+   if self.state == -1 then return end -- if player idle do nothing
+
+    -- Handle movement ONLY when in the normal gameplay state (state 0)
+    if self.state == 0 then
+        self:handleMovementAndAnimation() -- This call is correct
+
+    -- Handle the attacking state (state 1)
+    elseif self.state == 1 then
+        -- self:handleAttackAndAnimation(dt) -- This function still isn't defined, can be ignored for now
+
+        
+        -- Check if the current attack animation has finished
+        if self.animations.currentAnimation and
+           self.animations.currentAnimation.position == #self.animations.currentAnimation.frames then
+            -- Animation finished, return to normal state (0) and idle animation
+            self.state = 0
+            self.animations.currentAnimation = self.animations.idle
+            -- Reset the idle animation to its first frame
+            self.animations.currentAnimation:gotoFrame(1)
+        end
+        -- *** END ADDED FIX ***
     end
 
-    
-    self.animations.currentAnimation:update(dt)
+    -- Update the current animation (this line is correct)
+    -- Ensure currentAnimation exists before updating
+    if self.animations.currentAnimation then
+      self.animations.currentAnimation:update(dt)
+    end
+
 end
 
 function Player:draw(offsetX, offsetY, scaledWidth, scaledHeight)

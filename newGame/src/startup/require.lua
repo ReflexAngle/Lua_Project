@@ -3,17 +3,17 @@ function requireAll()
     createCollisionClasses()
 
     -- Resources / Data
-    --require("src/startup/resources")
-    --require("src/startup/data")
+     require("src/startup/resources")
+     require("src/startup/data")
 
     -- Utilities
-   -- require("src/utilities/cam")
-    -- require("src/utilities/destroyAll")
-    -- require("src/utilities/misc")
-    -- require("src/utilities/shaders")
-    -- require("src/utilities/shake")
-    -- require("src/utilities/triggers")
-    -- require("src/utilities/utils")
+       --require("src/utils/cam")
+       require("src/utils/destroyAll")
+    -- require("src/utils/misc")
+    -- require("src/utils/shaders")
+    -- require("src/utils/shake")
+    -- require("src/utils/triggers")
+    -- require("src/utils/utils")
 
     -- Core gameplay
     require("src/entities/player")
@@ -21,6 +21,7 @@ function requireAll()
     require("src/draw")
 
     -- Effects
+    require("src/effects/slash")
     --require("src/effects/blast")
     --require("src/effects/effect")
     --require("src/effects/shadows")
@@ -28,6 +29,7 @@ function requireAll()
     --require("src/effects/particles/particleEvent")
 
     -- Enemies
+    --use this require all as a checklist of what were adding and add you require methods in here
     --require("src/enemies/projectile")
     --require("src/enemies/enemy")
 
@@ -50,13 +52,13 @@ function requireAll()
 
     -- Levels
     -- require("src/levels/curtain")
-     require("src/levels/loadMap")
+    require("src/levels/loadMap")
     -- require("src/levels/npc")
-    -- require("src/levels/transition")
-    -- require("src/levels/wall")
+    -------- require("src/levels/transition")
+     require("src/levels/wall")
 
     -- UI
-    --require("src/ui/hud")
-    --require("src/ui/menu")
-    --require("src/ui/pause")
+    -- require("src/ui/hud")
+    -- require("src/ui/menu")
+    -- require("src/ui/pause")
 end

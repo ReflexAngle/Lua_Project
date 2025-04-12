@@ -4,7 +4,7 @@ playerWalkSheet = love.graphics.newImage('sprites/player/playerWalkSheet2.png')
 
 sprites.effects = {}
 
-sprites.effects.slice = love.graphics.newImage('sprites/effects/slice.png')
+sprites.effects.slice = love.graphics.newImage('sprites/effects/Slashhh.png')
 sprites.effects.sliceAnim = love.graphics.newImage('sprites/effects/sliceAnim.png')
 
 sprites.items = {}
