@@ -1,226 +1,462 @@
--- src/entities/player.lua
+local ObjectPool = require("src/designPatterns/objectPool")
 
-local anim8 = require 'libs/anim8'
-local ObjectPool = require 'src/designPatterns/objectPool'
-local normalize = require 'src/math/normalization'
+player = world:newBSGRectangleCollider(234, 184, 12, 12, 3)
+player.x = 0
+player.y = 0
+player.dir = "down"
+player.dirX = 1
+player.dirY = 1
+player.prevDirX = 1
+player.prevDirY = 1
+player.scaleX = 1
+player.speed = 90
+player.animSpeed = 0.1 --.14
+player.walking = false
+player.animTimer = 0
+player.max_hearts = 5
+player.hearts = 3
+-- player.stunTimer = 0
+-- player.damagedTimer = 0
+player.damagedBool = 1
+player.damagedFlashTime = 0.05
+player.invincible = 0 -- timer
+player.bowRecoveryTime = 0.25
+player.holdSprite = sprites.items.heart
+player.attackDir = vector(1, 0)
+player.comboCount = 0
+player.aiming = false
+player.arrowOffX = 0
+player.arrowOffX = 0
+player.bowVec = vector(1, 0)
+player.baseDamping = 1 --12
+player.dustTimer = 0
+player.rollDelayTimer = 0
+player.rotateMargin = 0.25
+-- 0 = Normal gameplay
+-- 0.5 = Rolling
+-- 1 = Sword swing
+-- 2 = Use (bomb)
+-- 3 = Bow (3: bow drawn, 3.1: recover)
+-- 4 = grapple (4: armed, 4.1: launching, 4.2: moving)
+-- 10 = Damage stun
+-- 11 = Hold item
+-- 12 = Transition
+player.state = -1
 
+player:setCollisionClass("Player")
+player:setFixedRotation(true)
+player:setLinearDamping(player.baseDamping)
 
-local Player = {}
-Player.__index = Player
-
-function Player:new(world, x, y, width, height, colliderRadius)
-    local self = setmetatable({}, Player)
-
-    -- Create physics collider
-    self.collider = world:newBSGRectangleCollider(x, y, width, height, colliderRadius)
-    --self.collider = world:newCircleCollider(dirX, dirY, 1, 1, 50)
-    self.collider:setCollisionClass("Player")
-    self.collider:setFixedRotation(true)
-    self.collider:setLinearDamping(12)
-
-    -- Movement & state
-    self.dir = "down"
-    self.dirX = 1
-    self.dirY = 1
-    self.prevDirX = 1
-    self.prevDirY = 1
-    self.walking = false
-    self.aiming = false
-    self.speed = 200  -- default should be 75
-    self.scaleX = 2
-    
-    -- -99 = dead
-    -- -1 = inactive/idle
-    -- 0 = Normal gameplay
-    -- 0.5 = Rolling
-    -- 1 = Sword swingin
-    -- 2 = Use (bomb)
-    -- 3 = Bow (3: bow drawn, 3.1: recover)
-    -- 4 = grapple (4: armed, 4.1: launching, 4.2: moving)
-    -- 10 = Damage stun
-    -- 11 = Hold item
-    -- 12 = Transition
-    self.state = 0
-
-    -- Health
-    self.max_hearts = 5
-    self.hearts = 3
-
-    -- Sprites
-    self.sprites = {
-        playerWalkSheet = love.graphics.newImage('sprites/player/playerWalkSheet2.png'),
-        fullHPBar = love.graphics.newImage('sprites/items/FullHeart.png'),
-        emptyHPBar = love.graphics.newImage('sprites/items/EmptyHeart.png'),
-        sword = love.graphics.newImage('sprites/items/sword2.png')
-    }
-
-    -- Heart Pool
-    self.heartPool = ObjectPool:new(function()
+-- Heart Pool
+    player.heartPool = ObjectPool:new(function()
         return {
-            sprite = self.sprites.fullHPBar,
+            sprite = sprites.items.heart,
             x = 0,
             y = 0,
             active = false
         }
-    end, self.max_hearts)
+    end, player.max_hearts)
 
-    -- Animations
-    local grid = anim8.newGrid(16, 32, self.sprites.playerWalkSheet:getWidth(), self.sprites.playerWalkSheet:getHeight())
-    self.animations = {
-        idle = anim8.newAnimation(grid('1-1', 1), 0.1),
-        walkUp = anim8.newAnimation(grid('3-4', 3), 0.1),
-        walkDown = anim8.newAnimation(grid('1-4', 1), 0.1),
-        walkLeft = anim8.newAnimation(grid('1-4', 4), 0.1),
-        walkRight = anim8.newAnimation(grid('2-4', 2), 0.1),
-       -- attack anims
-        attackDown = anim8.newAnimation(grid('1-2', 5), 0.1),
-        attackUp = anim8.newAnimation(grid('1-2', 6), 0.1),
-        attackRight = anim8.newAnimation(grid('1-2', 7), 0.1),
-        attackLeft = anim8.newAnimation(grid('1-2', 8), 0.1)
+player.grid = anim8.newGrid(16, 32, sprites.player.playerWalkSheet:getWidth(), sprites.player.playerWalkSheet:getHeight())
+
+player.animations = {}
+player.animations.idle = anim8.newAnimation(player.grid('1-1', 1), player.animSpeed)
+player.animations.walkUp = anim8.newAnimation(player.grid('3-4', 3), player.animSpeed)
+player.animations.walkDown = anim8.newAnimation(player.grid('1-4', 1), player.animSpeed)
+player.animations.walkLeft = anim8.newAnimation(player.grid('1-4', 4), player.animSpeed)
+player.animations.walkRight = anim8.newAnimation(player.grid('2-4', 2), player.animSpeed)
+
+player.animations.attackUp = anim8.newAnimation(player.grid('1-2', 5), player.animSpeed)
+player.animations.attackDown = anim8.newAnimation(player.grid('1-2', 6), player.animSpeed)
+player.animations.attackLeft = anim8.newAnimation(player.grid('1-2', 7), player.animSpeed)
+player.animations.attackRight = anim8.newAnimation(player.grid('1-2', 8), player.animSpeed)
+--player.animations.downRight = anim8.newAnimation(player.grid('1-2', 1), player.animSpeed)
+--player.animations.downLeft = anim8.newAnimation(player.grid('1-2', 1), player.animSpeed)
+--player.animations.upRight = anim8.newAnimation(player.grid('1-2', 2), player.animSpeed)
+--player.animations.upLeft = anim8.newAnimation(player.grid('1-2', 2), player.animSpeed)
+-- player.animations.idle = anim8.newAnimation(grid('1-1', 1), 0.1),
+
+-- player.animations.walkUp == anim8.newAnimation(grid('3-4', 3), 0.1),
+-- -- attack anims
+-- player.animations.attackDown = anim8.newAnimation(grid('1-2', 5), 0.1),
+-- player.animations.attackUp = anim8.newAnimation(grid('1-2', 6), 0.1),
+-- player.animations.attackRight = anim8.newAnimation(grid('1-2', 7), 0.1),
+-- player.animations.attackLeft = anim8.newAnimation(grid('1-2', 8), 0.1)
+
+-- player.animations.swordDownRight = anim8.newAnimation(player.grid('1-2', 1), player.animSpeed)
+-- player.animations.swordDownLeft = anim8.newAnimation(player.grid('1-2', 1), player.animSpeed)
+-- player.animations.swordUpRight = anim8.newAnimation(player.grid('1-2', 2), player.animSpeed)
+-- player.animations.swordUpLeft = anim8.newAnimation(player.grid('1-2', 2), player.animSpeed)
+-- player.animations.useDownRight = anim8.newAnimation(player.grid(2, 1), player.animSpeed)
+-- player.animations.useDownLeft = anim8.newAnimation(player.grid(2, 1), player.animSpeed)
+-- player.animations.useUpRight = anim8.newAnimation(player.grid(2, 2), player.animSpeed)
+-- player.animations.useUpLeft = anim8.newAnimation(player.grid(2, 2), player.animSpeed)
+-- player.animations.hold = anim8.newAnimation(player.grid(1, 1), player.animSpeed)
+-- player.animations.rollDown = anim8.newAnimation(player.grid('1-3', 4), 0.11)
+-- player.animations.rollUp = anim8.newAnimation(player.grid('1-3', 5), 0.11)
+-- player.animations.stopDown = anim8.newAnimation(player.grid('1-3', 6), 0.22, function() player.anim = player.animations.idleDown end)
+-- player.animations.stopUp = anim8.newAnimation(player.grid('1-3', 7), 0.22, function() player.anim = player.animations.idleUp end)
+-- player.animations.idleDown = anim8.newAnimation(player.grid('1-4', 8), {1.2, 0.1, 2.4, 0.1})
+-- player.animations.idleUp = anim8.newAnimation(player.grid('1-2', 9), 0.22)
+
+player.anim = player.animations.idle
+
+
+player.buffer = {} -- input buffer
+
+function player:update(dt)
+
+    --if pause.active then player.anim:update(dt) end
+    if  player.state == 0 then 
+        player:handleMovementAndAnimation()
+
+    elseif  player.state == 1 then
+        if player.anim and player.anim.position == #player.anim.frames then
+            player.state = 0
+            player.anim = player.animations.idle
+            
+            if player.anim then player.anim:gotoFrame(1) end
+        end
+    end
+
+    --update current anim
+    if player.anim then
+        player.anim:update(dt)
+    end
+end
+
+function player:draw()
+
+    
+    -- Sword sprite
+    local swSpr = sprites.items.sword
+    local swX = 0
+    local swY = 0
+    local swLayer = -1
+    -- local arrowSpr = sprites.items.arrow
+    -- local bowSpr = sprites.items.bow1
+    --local hookSpr = sprites.items.grappleArmed
+    --if player.aiming and (player.animTimer > 0 or data.arrowCount < 1) then bowSpr = sprites.items.bow2 end
+    --if player.state == 4.1 or player.state == 4.2 then hookSpr = sprites.items.grappleHandle end
+
+    local swordRot = 0
+    if player.state == 1.1 then
+        local tempVec = 0
+        if player.comboCount % 2 == 0 then
+            tempVec = player.attackDir:rotated(math.pi/2)
+        else
+            tempVec = player.attackDir:rotated(math.pi/-2)
+        end
+        swordRot = math.atan2(tempVec.y, tempVec.x)
+        swX = tempVec.x * 12
+        swY = tempVec.y * 12
+        
+        if swY > 0 then
+            swLayer = 1
+        end
+    end
+
+    -- local px = player:getX()
+    -- local py = player:getY()+1
+
+    -- local bowLayer = -1
+    -- player.bowVec = toMouseVector(px, py)
+    -- local bowScaleY = 1
+    -- if player.bowVec.x < 0 then bowScaleY = -1 end
+    -- local bowRot = math.atan2(player.bowVec.y, player.bowVec.x)
+    -- local bowOffX = player.bowVec.x*6
+    -- local bowOffY = player.bowVec.y*6
+    -- local hookOffX = player.bowVec.x*6
+    -- local hookOffY = player.bowVec.y*6
+    -- player.arrowOffX = player.bowVec.x*6
+    -- player.arrowOffY = player.bowVec.y*6
+
+    -- if bowRot > -1 * player.rotateMargin or bowRot < (math.pi - player.rotateMargin) * -1 then
+    --     bowLayer = 1
+    -- end
+
+   -- love.graphics.draw(sprites.playerShadow, px, py+5, nil, nil, nil, sprites.playerShadow:getWidth()/2, sprites.playerShadow:getHeight()/2)
+    
+    if player.state == 1.1 and swLayer == -1 then
+        love.graphics.draw(swSpr, px+swX, py+swY, swordRot, nil, nil, swSpr:getWidth()/2, swSpr:getHeight()/2)
+    end
+    
+    if player.aiming and bowLayer == -1 then
+
+        
+        --if player.stunTimer > 0 then love.graphics.setShader(shaders.whiteout) end
+
+    player.anim:draw(sprites.playerSheet, player:getX(), player:getY()-2, nil, player.dirX, 1, 9.5, 10.5)
+
+   -- love.graphics.setShader()
+
+    if player.state == 1.1 and swLayer == 1 then
+        love.graphics.draw(swSpr, px+swX, py+swY, swordRot, nil, nil, swSpr:getWidth()/2, swSpr:getHeight()/2)
+    end
+
+    -- if player.aiming and bowLayer == 1 then
+    --     love.graphics.draw(bowSpr, px + bowOffX, py + bowOffY, bowRot, 1.15, bowScaleY, bowSpr:getWidth()/2, bowSpr:getHeight()/2)
+    --     if data.arrowCount > 0 and player.animTimer <= 0 then love.graphics.draw(arrowSpr, px + bowOffX, py + bowOffY, bowRot, 0.85, nil, arrowSpr:getWidth()/2, arrowSpr:getHeight()/2) end
+    --     --love.graphics.draw(hookSpr, px + hookOffX, py + hookOffY, bowRot, 1.15, nil, hookSpr:getWidth()/2, hookSpr:getHeight()/2)
+    -- end
+
+    -- if player.state == 11 then
+    --     love.graphics.draw(player.holdSprite, player:getX(), player:getY()-18, nil, nil, nil, player.holdSprite:getWidth()/2, player.holdSprite:getHeight()/2)
+    -- end
+end
+end
+
+-- function player:checkDamage()
+--     if player.damagedTimer > 0 then return end
+
+--     local hitEnemies = world:queryCircleArea(player:getX(), player:getY(), 5, {'Enemy'})
+--     if #hitEnemies > 0 then
+--         local e = hitEnemies[1]
+--         if e.parent.dizzyTimer <= 0 and e.parent.stunTimer <= 0 then
+--             player:hurt(0.5, e:getX(), e:getY())
+--         end
+--     end
+
+    -- to fix the overlap issue, check distance as well
+    -- for _,e in ipairs(enemies) do
+    --     if e.physics and distanceBetween(e.physics:getX(), e.physics:getY(), player:getX(), player:getY()) < 4 then
+    --         player:hurt(0.5, e.physics:getX(), e.physics:getY())
+    --     end
+    -- end
+
+--     if player:enter('Projectile') then
+--         local e = player:getEnterCollisionData('Projectile')
+--         e.collider.dead = true
+--         player:hurt(0.5, e.collider:getX(), e.collider:getY())
+--     end
+-- end
+
+-- function player:checkTransition()
+--     if player:enter('Transition') then
+--         local t = player:getEnterCollisionData('Transition')
+--         if t.collider.type == "instant" then
+--             triggerTransition(t.collider.id, t.collider.destX, t.collider.destY)
+--         else
+--             curtain:call(t.collider.id, t.collider.destX, t.collider.destY, t.collider.type)
+--         end
+--         --triggerTransition(t.collider.id, t.collider.destX, t.collider.destY)
+--     end
+-- end
+
+-- function player:hurt(damage, srcX, srcY)
+--     if player.damagedTimer > 0 then return end
+--     player.damagedTimer = 2
+--     shake:start(0.1, 2, 0.03)
+--     particleEvent("playerHit", player:getX(), player:getY())
+--     dj.play(sounds.player.hurt, "static", "effect")
+--     player.health = player.health - damage
+--     player.state = 10 -- damaged
+--     player:setLinearVelocity((getFromToVector(srcX, srcY, player:getX(), player:getY()) * 300):unpack())
+--     player.stunTimer = 0.075
+--     player.aiming = false
+-- end
+
+-- Corrected function in src/entities/player_setup.lua (or wherever player methods are defined)
+
+function player.handleMovementAndAnimation() -- Use dot (.) not colon (:)
+    -- This function assumes it's only called when player.state == 0
+
+    local moveX, moveY = 0, 0
+    local isMoving = false -- Flag to track if movement keys are pressed
+
+    -- Check keyboard input and set temporary move direction & animation
+    -- Using elseif for opposite directions is slightly cleaner
+    if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
+        moveX = 1
+        player.anim = player.animations.walkRight
+        isMoving = true
+    elseif love.keyboard.isDown("a") or love.keyboard.isDown("left") then
+        moveX = -1
+        player.anim = player.animations.walkLeft
+        isMoving = true
+    end
+
+    if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
+        moveY = 1
+        player.anim = player.animations.walkDown 
+        isMoving = true
+    elseif love.keyboard.isDown("w") or love.keyboard.isDown("up") then
+        moveY = -1
+        player.anim = player.animations.walkUp
+        isMoving = true
+    end
+
+    if not isMoving then -- Check the flag instead of moveX/Y which might be normalized
+        player.animations.currentAnimation = player.animations.idle -- Use player.
+    end
+
+    -- Normalize diagonal movement - this call should work fine now
+    -- Make sure the 'normalize' table is accessible globally or required in this file
+    if normalize and normalize.NormalizedVector then
+    moveX, moveY = normalize.NormalizedVector(moveX, moveY)    else
+        print("Warning: normalize module not found/loaded.")
+    end
+
+    -- Calculate final velocity vector using player's speed
+    local vec = { x = moveX * player.speed, y = moveY * player.speed } -- Use player.
+
+    if player.collider then -- Check collider exists
+       player.collider:setLinearVelocity(vec.x, vec.y) -- Use player.
+    end
+
+    -- Update facing direction based on actual movement input
+    -- Only update if there *was* horizontal or vertical input this frame
+    if moveX ~= 0 then
+        player.dirX = moveX -- Use player.
+    end
+    if moveY ~= 0 then
+        player.dirY = moveY -- Use player.
+    end
+
+    -- Update the string direction variable based on the prioritized input
+    if moveY == -1 then
+        player.dir = "up" -- Use player.
+    elseif moveY == 1 then
+        player.dir = "down" -- Use player.
+    elseif moveX == -1 then
+        player.dir = "left" -- Use player.
+    elseif moveX == 1 then
+        player.dir = "right" -- Use player.
+    end
+    -- If no movement (isMoving is false), player.dir retains its previous value
+
+end 
+
+function player:swingSword()
+
+    -- The player can only swing their sword if the player.state is 0 (regular gameplay)
+    if player.state ~= 0 then
+        player:addToBuffer("sword")
+        return
+    end
+    
+--player.comboCount = player.comboCount + 1
+    
+    player.attackDir = toMouseVector(player:getX(), player:getY())
+    player:setDirFromVector(player.attackDir)
+    
+    player.state = 1
+    
+    if player.dirX == 1 then
+        if player.dirY == 1 then
+            player.anim = player.animations.swordDownRight
+        else
+            player.anim = player.animations.swordUpRight
+        end
+    else
+        if player.dirY == 1 then
+            player.anim = player.animations.swordDownLeft
+        else
+            player.anim = player.animations.swordUpLeft
+        end
+    end
+    
+    --player.anim:gotoFrame(1)
+    -- animTimer for sword wind-up
+    player.animTimer = 0.075
+
+end
+
+function player:swordDamage()
+    -- Query for enemies to hit with the sword
+    --local hitEnemies = world:queryCircleArea(player:getX(), player:getY(), 24, {'Enemy'})
+
+    local px, py = player:getPosition()
+    local dir = player.attackDir:normalized()
+    local rightDir = dir:rotated(math.pi/2)
+    local leftDir = dir:rotated(math.pi/-2)
+    local polygon = {
+        px + dir.x*20,
+        py + dir.y*20,
+        px + dir:rotated(math.pi/8).x*20,
+        py + dir:rotated(math.pi/8).y*20,
+        px + dir:rotated(math.pi/4).x*20,
+        py + dir:rotated(math.pi/4).y*20,
+        px + dir:rotated(3*math.pi/8).x*20,
+        py + dir:rotated(3*math.pi/8).y*20,
+        px + rightDir.x*22,
+        py + rightDir.y*22,
+        px + rightDir.x*22 + rightDir:rotated(math.pi/2).x*6,
+        py + rightDir.y*22 + rightDir:rotated(math.pi/2).y*6,
+        px + leftDir.x*22 + leftDir:rotated(math.pi/-2).x*6,
+        py + leftDir.y*22 + leftDir:rotated(math.pi/-2).y*6,
+        px + leftDir.x*22,
+        py + leftDir.y*22,
+        px + dir:rotated(3*math.pi/-8).x*20,
+        py + dir:rotated(3*math.pi/-8).y*20,
+        px + dir:rotated(math.pi/-4).x*20,
+        py + dir:rotated(math.pi/-4).y*20,
+        px + dir:rotated(math.pi/-8).x*20,
+        py + dir:rotated(math.pi/-8).y*20,
     }
 
-      
+    local range = math.random()/4
+    --dj.play(sounds.items.sword, "static", "effect", 1, 1+range)
 
-    self.animations.currentAnimation = self.animations.idle
-    return self
+    -- local hitEnemies = world:queryPolygonArea(polygon, {'Enemy'})
+    -- for _,e in ipairs(hitEnemies) do
+    --     local knockbackDir = getPlayerToSelfVector(e:getX(), e:getY())
+    --     e.parent:hit(1, knockbackDir, 0.1)
+    -- end
 end
 
-
-
-function Player:update(dt)
-
-   -- if self.state == -1 then return end -- if player idle do nothing
-
-    --if self.state == 0 then  -- if player is playing do movement 
-   --    self:handleMovementAndAnimation()
-  --  elseif self.state == 1 then -- if play attacks 
-       -- self:handleAttackAndAnimation(dt)
-        -- try to prevent movement and keep the sword in diagonal pos to player
-    --end
-
-
-   if self.state == -1 then return end -- if player idle do nothing
-
-    -- Handle movement ONLY when in the normal gameplay state (state 0)
-    if self.state == 0 then
-        self:handleMovementAndAnimation() -- This call is correct
-
-    -- Handle the attacking state (state 1)
-    elseif self.state == 1 then
-        -- self:handleAttackAndAnimation(dt) -- This function still isn't defined, can be ignored for now
-
-        
-        -- Check if the current attack animation has finished
-        if self.animations.currentAnimation and
-           self.animations.currentAnimation.position == #self.animations.currentAnimation.frames then
-            -- Animation finished, return to normal state (0) and idle animation
-            self.state = 0
-            self.animations.currentAnimation = self.animations.idle
-            -- Reset the idle animation to its first frame
-            self.animations.currentAnimation:gotoFrame(1)
-        end
-        -- *** END ADDED FIX ***
-    end
-
-    -- Update the current animation (this line is correct)
-    -- Ensure currentAnimation exists before updating
-    if self.animations.currentAnimation then
-      self.animations.currentAnimation:update(dt)
-    end
-
-end
-
-function Player:draw(offsetX, offsetY, scaledWidth, scaledHeight)
-    local x, y = self.collider:getX(), self.collider:getY()
-    --self.animations.currentAnimation:draw(self.sprites.playerWalkSheet, x, y, 0, self.scaleX, self.scaleX)
-    self.animations.currentAnimation:draw(self.sprites.playerWalkSheet, x, y, 0, self.scaleX, self.scaleX, 8, 16)
-end
-
-function Player:drawHearts()
-    local heartX, heartY = 5, 5
-    local heartSpacing = 16 * self.scaleX
-    local heartScale = self.scaleX
-    
-    for i = 1, self.max_hearts do
-        local heart = self.heartPool:get()
-        heart.x = heartX + (i - 1) * heartSpacing
-        heart.y = heartY
-        heart.sprite = (i <= self.hearts) and self.sprites.fullHPBar or self.sprites.emptyHPBar
-        
-        love.graphics.draw(heart.sprite, heart.x, heart.y, 0, heartScale, heartScale)
-        self.heartPool:release(heart)
+function player:setDirFromVector(vec)
+    local rad = math.atan2(vec.y, vec.x)
+    if rad >= player.rotateMargin*-1 and rad < math.pi/2 then
+        player.dirX = 1
+        player.dirY = 1
+    elseif (rad >= math.pi/2 and rad < math.pi) or (rad < (math.pi - player.rotateMargin)*-1) then
+        player.dirX = -1
+        player.dirY = 1
+    elseif rad < 0 and rad > math.pi/-2 then
+        player.dirX = 1
+        player.dirY = -1
+    else
+        player.dirX = -1
+        player.dirY = -1
     end
 end
 
-function Player:attack()
-    -- Use 'not self.aiming' instead of '!player.aiming'
-    if self.state == 0 and not self.aiming then
-        print("Player: Attack triggered!") -- Keep for debugging
-
-        self.state = 1 -- Set state to attacking
-        self.collider:setLinearVelocity(0, 0) -- Stop movement
-
-        -- Select correct attack animation based on facing direction
-        if self.dirY > 0 then -- Facing Down
-            self.currentAnimation = self.animations.attackDown
-        elseif self.dirY < 0 then -- Facing Up
-            self.currentAnimation = self.animations.attackUp
-        elseif self.dirX < 0 then -- Facing Left
-            self.currentAnimation = self.animations.attackLeft
-        elseif self.dirX > 0 then -- Facing Right
-            self.currentAnimation = self.animations.attackRight
-        else -- Default case
-            self.currentAnimation = self.animations.attackDown
+function player:processBuffer(dt)
+    for i=#player.buffer,1,-1 do
+        player.buffer[i][2] = player.buffer[i][2] - dt
+    end
+    for i=#player.buffer,1,-1 do
+        if player.buffer[i][2] <= 0 then
+            table.remove(player.buffer, i)
         end
+    end
 
-        -- Reset the animation to the beginning
-        if self.currentAnimation then -- Check if animation exists
-            self.currentAnimation:gotoFrame(1)
-        end
+    if player.state == 0 then
+        player:useBuffer()
     end
 end
 
-function Player:takeDamage()
-    self.hearts = math.max(0, self.hearts - 1)
+function player:addToBuffer(action)
+    if action == "roll" and player.state == 0.5 then
+        table.insert(player.buffer, {action, 0.1})
+    else
+        table.insert(player.buffer, {action, 0.25})
+    end
 end
 
-function Player:heal()
-    self.hearts = math.min(self.max_hearts, self.hearts + 1)
+function player:useBuffer()
+    local action = nil
+    if #player.buffer > 0 then
+        action = player.buffer[1][1]
+    end
+
+    -- clear buffer
+    for k,v in pairs(player.buffer) do player.buffer[k]=nil end
+
+    if action == nil then return end
+
+    if action == "sword" then
+        player:swingSword()
+    end
 end
-
-
-function Player:handleMovementAndAnimation()
-    local moveX, moveY = 0, 0
-         if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
-            moveX = 1 
-            self.animations.currentAnimation = self.animations.walkRight    
-            end
-
-         if love.keyboard.isDown("a") or love.keyboard.isDown("left") then 
-            moveX = -1
-            self.animations.currentAnimation = self.animations.walkLeft    
-            end
-
-         if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
-            moveY = 1
-            self.animations.currentAnimation = self.animations.walkDown
-            end
-
-         if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
-            moveY = -1
-            self.animations.currentAnimation = self.animations.walkUp    
-            end
-
-        --  Use the function from your normalize module ***
-            moveX, moveY = normalize.NormalizedVector(moveX, moveY) -- Call the function
-
-            -- Apply velocity (using the potentially normalized moveX, moveY)
-            local vec = { x = moveX * self.speed, y = moveY * self.speed }
-            self.collider:setLinearVelocity(vec.x, vec.y)
-
-            -- Update facing direction (stores the last non-zero direction)
-            if moveX ~= 0 then self.dirX = moveX end
-            if moveY ~= 0 then self.dirY = moveY end
-        end
-
-return Player

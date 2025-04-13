@@ -1,12 +1,12 @@
 function updateAll(dt)
 
     --if pause.active == false then
-      --  updateGame(dt)
+      updateGame(dt)
     --end
     
-    pause:update(dt)
+    --pause:update(dt)
    -- dj.cleanup()
-   -- if gameMap then gameMap:update(dt) end
+    if gameMap then gameMap:update(dt) end
     checkWindowSize()
 
 end
@@ -19,7 +19,7 @@ function updateGame(dt)
 
     player:update(dt)
     world:update(dt)
-    -- walls:update(dt)
+    walls:update(dt)
     -- blasts:update(dt)
     -- effects:update(dt)
     -- waters:update(dt)

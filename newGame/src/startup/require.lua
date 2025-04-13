@@ -9,6 +9,11 @@ function requireAll()
     -- Utilities
        --require("src/utils/cam")
        require("src/utils/destroyAll")
+       require("src/math/normalization")
+       
+       
+       -- Design Patterns
+       require("src/designPatterns/objectPool")
     -- require("src/utils/misc")
     -- require("src/utils/shaders")
     -- require("src/utils/shake")
@@ -55,7 +60,7 @@ function requireAll()
     require("src/levels/loadMap")
     -- require("src/levels/npc")
     -------- require("src/levels/transition")
-     require("src/levels/wall")
+     require("src.levels.walls")
 
     -- UI
     -- require("src/ui/hud")

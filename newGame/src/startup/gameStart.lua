@@ -24,8 +24,8 @@ function gameStart()
     -- The game's graphics scale up, this method finds the right ratio
     setScale()
     
-    --vector = require "libraries/hump/vector"
-    --flux = require "libraries/flux/flux"
+    vector = require "libs/hump/vector"
+    --flux = require "libs/flux/flux"
     --require "libraries/tesound"
     --require("libraries/show")
     
@@ -102,6 +102,6 @@ function setScale(input)
         windowWidth = love.graphics.getWidth()
         windowHeight = love.graphics.getHeight()
         setScale()
-    pause:init()
-    initFonts()
+    --pause:init()
+    --initFonts()
 end

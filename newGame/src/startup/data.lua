@@ -13,7 +13,7 @@
 --     data.outfit = 1 -- which cloak is equipped
 
 --     if fileNumber == nil then fileNumber = 1 end
---     data.fileNumber = fileNumber -- which file are we using
+     data.fileNumber = fileNumber -- which file are we using
 
 --     -- Currently, can equip an item to Z and X 
         data.item = {}
@@ -35,20 +35,20 @@
 --     data.chests = {}
    end
 
--- function saveGame()
---     data.saveCount = data.saveCount + 1
---     data.playerX = player:getX()
---     data.playerY = player:getY()
---     data.map = loadedMap
+function saveGame()
+    data.saveCount = data.saveCount + 1
+    data.playerX = player:getX()
+    data.playerY = player:getY()
+    data.map = loadedMap
 
---     if data.fileNumber == 1 then
---         love.filesystem.write("file1.lua", table.show(data, "data"))
---     elseif data.fileNumber == 2 then
---         love.filesystem.write("file2.lua", table.show(data, "data"))
---     elseif data.fileNumber == 3 then
---         love.filesystem.write("file3.lua", table.show(data, "data"))
---     end
--- end
+    if data.fileNumber == 1 then
+        love.filesystem.write("file1.lua", table.show(data, "data"))
+    elseif data.fileNumber == 2 then
+        love.filesystem.write("file2.lua", table.show(data, "data"))
+    elseif data.fileNumber == 3 then
+        love.filesystem.write("file3.lua", table.show(data, "data"))
+    end
+end
   
 function loadGame(fileNumber)
     if fileNumber == 1 then
@@ -86,7 +86,7 @@ end
 function startFresh(fileNumber)
     createNewSave(fileNumber)
     data.map = "test"
-    data.playerX = 276
-    data.playerY = 164
+    data.playerX = 106
+    data.playerY = 300
     player.state = 0
 end
