@@ -21,8 +21,8 @@
             "scale": 2,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 288,
-                "y": 192
+                "x": 288.25,
+                "y": 192.25
             }
         },
         "C:/Users/valro/Desktop/legend-of-lua-main/maps/llghtmap.tmx#lightmap": {
@@ -32,8 +32,8 @@
             "scale": 0.5185416666666666,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 856.2474889513862,
-                "y": 426.19525914021693
+                "x": 240.0964242667739,
+                "y": 174.52792286058656
             }
         },
         "C:/Users/valro/Desktop/legend-of-lua-main/maps/menu.tmx#overworld": {
@@ -60,8 +60,8 @@
             "scale": 1.5,
             "selectedLayer": 9,
             "viewCenter": {
-                "x": 584,
-                "y": 192
+                "x": 288.3333333333333,
+                "y": 175.66666666666663
             }
         },
         "C:/Users/valro/Desktop/legend-of-lua-main/maps/test2.tmx#overworld-edit": {
