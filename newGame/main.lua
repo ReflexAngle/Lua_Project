@@ -32,6 +32,8 @@ function love.update(dt)
         print("following the player")
         print("player state: ", player.state)
         print("player pos X : ", player.x)
+        print("player pos y : ", player.y)
+
         --cameraFollow.FollowPlayer(player)
     end
     -- if player then
@@ -49,14 +51,16 @@ function love.draw()
              --particleWorld:draw()
           end
     cam:detach()
-    --drawAfterCamera()
+
+    drawAfterCamera()
+
 
     enemy.DrawEnemy()
     --cameraFollow.Reset()
 
-    if player and player.drawHearts then
-        player:drawHearts()
-     end
+    -- if player and player.drawHearts then
+    --     player:drawHearts()
+    --  end
 
 end
 

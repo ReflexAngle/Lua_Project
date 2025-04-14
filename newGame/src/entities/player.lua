@@ -1,6 +1,7 @@
 local ObjectPool = require("src/designPatterns/objectPool")
 local normalize = require("src/math/normalization")
-player = world:newBSGRectangleCollider(234, 184, 12, 12, 3)
+-- player = world:newBSGRectangleCollider(234, 184, 12, 12, 3)
+player = world:newBSGRectangleCollider(275, 180, 12, 12, 3)
 --player = world:newBSGRectangleCollider(204,184 ,15, 15, 4 )
 player.x = 0
 player.y = 0
@@ -29,7 +30,7 @@ player.aiming = false
 player.arrowOffX = 0
 player.arrowOffX = 0
 player.bowVec = vector(1, 0)
-player.baseDamping = 12 --12
+player.baseDamping = 1 --12
 player.dustTimer = 0
 player.rollDelayTimer = 0
 player.rotateMargin = 0.25
@@ -64,7 +65,7 @@ player.animations = {}
 player.animations.idle = anim8.newAnimation(player.grid('1-1', 1), player.animSpeed)
 player.animations.walkUp = anim8.newAnimation(player.grid('3-4', 3), player.animSpeed)
 player.animations.walkDown = anim8.newAnimation(player.grid('1-4', 1), player.animSpeed)
-player.animations.walkLeft = anim8.newAnimation(player.grid('1-4', 4), player.animSpeed)
+player.animations.walkLeft = anim8.newAnimation(player.grid('2-4', 4), player.animSpeed)
 player.animations.walkRight = anim8.newAnimation(player.grid('1-4', 2), player.animSpeed)
 
 player.animations.attackDown = anim8.newAnimation(player.grid('1-2', 5), player.animSpeed)
@@ -107,9 +108,10 @@ player.buffer = {} -- input buffer
 
 function player:update(dt)
 
+
     --if pause.active then player.anim:update(dt) end
     if  player.state == 0 then 
-        --player:setLinearDamping(player.baseDamping)
+        player:setLinearDamping(player.baseDamping)
         player:handleMovementAndAnimation()
 
     elseif  player.state == 1 then
@@ -119,15 +121,15 @@ function player:update(dt)
             
             if player.anim then player.anim:gotoFrame(1) end
         end
+        player.anim:update(dt)
     end
 
     --update current anim
-    if player.anim then
-        player.anim:update(dt)
-    end
 end
 
 function player:draw()
+    
+
     -- Sword sprite
     local swSpr = sprites.items.sword
     local swX = 0
@@ -196,7 +198,7 @@ function player:draw()
         -- Removed the '-2' from player:getY()
         -- Origin (8, 16) assumes the sprite is centered within its 16x32 frame
 
-        player.anim:draw(sprites.player.playerWalkSheet, player:getX(), player:getY(), nil, player.dirX * player.scaleX, player.scaleX, 8, 16) 
+     player.anim:draw(sprites.player.playerWalkSheet, player:getX(), player:getY(), nil, player.dirX * player.scaleX, player.scaleX, 8, 16) 
     end
    
    -- if player.state == 1.1 and swLayer == -1 then
@@ -282,7 +284,8 @@ function player:draw()
 
 -- Corrected function in src/entities/player_setup.lua (or wherever player methods are defined)
 
-function player.handleMovementAndAnimation() -- Use dot (.) not colon (:)
+
+function player:handleMovementAndAnimation() -- Use dot (.) not colon (:)
     -- This function assumes it's only called when player.state == 0
 
     local moveX, moveY = 0, 0
@@ -293,20 +296,27 @@ function player.handleMovementAndAnimation() -- Use dot (.) not colon (:)
     -- Using elseif for opposite directions is slightly cleaner
     if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
         moveX = 1
+        player.dirX  = 1
         targetAnim = player.animations.walkRight
         isMoving = true
-    elseif love.keyboard.isDown("a") or love.keyboard.isDown("left") then
+    end
+    if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
         moveX = -1
+        player.dirX = -1
         targetAnim = player.animations.walkLeft
         isMoving = true
     end
 
     if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
         moveY = 1
+        player.dirY = 1
         targetAnim = player.animations.walkDown 
         isMoving = true
-    elseif love.keyboard.isDown("w") or love.keyboard.isDown("up") then
+    end 
+    
+    if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
         moveY = -1
+        player.dirY = -1
         targetAnim = player.animations.walkUp
         isMoving = true
     end
@@ -334,6 +344,7 @@ function player.handleMovementAndAnimation() -- Use dot (.) not colon (:)
 
     -- Calculate final velocity vector using player's speed
     local vec = { x = moveX * player.speed, y = moveY * player.speed } -- Use player.
+        print("Calculated Velocity Vec: x=", vec.x, "y=", vec.y, "| Speed:", player.speed) 
 
     if player.collider then -- Check collider exists
        player.collider:setLinearVelocity(vec.x, vec.y) -- Use player.
@@ -357,6 +368,8 @@ function player.handleMovementAndAnimation() -- Use dot (.) not colon (:)
     elseif moveX == 1 then
         player.dir = "right" 
     end
+
+   
 end 
 
 function player:swingSword()

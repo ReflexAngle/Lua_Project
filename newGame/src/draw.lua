@@ -1,3 +1,5 @@
+local enemy = require("src/enemies/enemyBehavior")
+
 function drawBeforeCamera()
    -- menu:draw()
 end
@@ -28,6 +30,8 @@ function drawCamera()
     end
 
     --drawShadows()
+    player:draw()
+    enemy.DrawEnemy()
     walls:draw()
     --effects:draw(-1) -- two layers of effects
    -- chests:draw(-1)
@@ -39,7 +43,6 @@ function drawCamera()
     -- grapple:draw(-1)
     -- effects:draw(0)
     -- trees:draw(-1)
-    player:draw()
     -- chests:draw(1)
     -- arrows:draw(1)
     -- fireballs:draw(1)
@@ -65,6 +68,10 @@ end
 function drawAfterCamera()
     --curtain:draw()
     if gamestate == 0 then return end
-    --drawHUD()
+    if HUD and HUD.draw() then
+        HUD.draw()
+    end
+        
+    -- end--drawHUD()
     --pause:draw()
 end

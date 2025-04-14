@@ -1,5 +1,5 @@
 Camera = require "libs/hump/camera"
-cam = Camera(0, 0, scale)
+cam = Camera(0, 0, 4)-- do 3.5 for testing 4 for game play or scale 
 cam.smoother = Camera.smooth.damped(8)
 
 function cam:update(dt)

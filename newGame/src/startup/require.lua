@@ -63,7 +63,7 @@ function requireAll()
      require("src.levels.walls")
 
     -- UI
-    -- require("src/ui/hud")
+   HUD = require("src/ui/hud")
     -- require("src/ui/menu")
     -- require("src/ui/pause")
 end
