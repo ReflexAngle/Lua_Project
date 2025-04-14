@@ -28,7 +28,6 @@ function gameStart()
     --flux = require "libs/flux/flux"
     --require "libraries/tesound"
     --require("libraries/show")
-    
     anim8 = require("libs/anim8")
     sti = require("libs/Simple-Tiled-Implementation/sti")
     
@@ -43,7 +42,6 @@ function gameStart()
     
     require("src/startup/require")
     requireAll()
-    
 end
 
 function setWindowSize(full, width, height)
@@ -71,7 +69,7 @@ function initGlobals()
     -- game state
     -- 0: main menu
     -- 1: gameplay
-    --gamestate = 0
+    gamestate = 1
     --globalStun = 0
 end
 
@@ -81,13 +79,11 @@ function setScale(input)
     if vertical then
         scale = (7 / 1200) * windowHeight
     end
-    
-    -- you could add camera zoom here
-    
-    -- if cam then
-        --     cam:zoomTo(scale)
-        -- end
+     
+    if cam then
+       cam:zoomTo(scale)
     end
+end
     
     function checkWindowSize()
         local width = love.graphics.getWidth()

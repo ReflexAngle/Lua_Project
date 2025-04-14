@@ -36,7 +36,7 @@ function updateGame(dt)
     -- projectiles:update(dt)
     -- trees:update(dt)
 
-    -- cam:update(dt)
+    cam:update(dt)
     -- shake:update(dt)
     -- shaders:update(dt)
     -- triggers:update(dt)

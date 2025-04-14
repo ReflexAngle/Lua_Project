@@ -1,6 +1,7 @@
 local ObjectPool = require("src/designPatterns/objectPool")
-
-player = world:newBSGRectangleCollider(234, 184, 12, 12, 3)
+local normalize = require("src/math/normalization")
+--player = world:newBSGRectangleCollider(234, 184, 12, 12, 3)
+player = world:newBSGRectangleCollider(204,184 ,15, 15, 4 )
 player.x = 0
 player.y = 0
 player.dir = "down"
@@ -41,7 +42,7 @@ player.rotateMargin = 0.25
 -- 10 = Damage stun
 -- 11 = Hold item
 -- 12 = Transition
-player.state = -1
+player.state = 0
 
 player:setCollisionClass("Player")
 player:setFixedRotation(true)
@@ -108,6 +109,7 @@ function player:update(dt)
 
     --if pause.active then player.anim:update(dt) end
     if  player.state == 0 then 
+        player:setLinearDamping(player.baseDamping)
         player:handleMovementAndAnimation()
 
     elseif  player.state == 1 then
@@ -126,8 +128,6 @@ function player:update(dt)
 end
 
 function player:draw()
-
-    
     -- Sword sprite
     local swSpr = sprites.items.sword
     local swX = 0
@@ -156,8 +156,18 @@ function player:draw()
         end
     end
 
-    -- local px = player:getX()
-    -- local py = player:getY()+1
+    local px = player:getX()
+    local py = player:getY()
+
+    if px and py then -- Make sure position is valid
+        love.graphics.setColor(1, 0, 0, 1) -- Bright red, fully opaque
+        -- Draw a 16x16 rectangle centered roughly where the player sprite would be
+        love.graphics.rectangle("fill", px - 8, py - 16, 16, 32) 
+        love.graphics.setColor(1, 1, 1, 1) -- Reset color to white
+        print("Attempting to draw test rectangle at:", px, py) -- Add console print
+    else
+         print("Player position invalid in draw:", px, py)
+    end
 
     -- local bowLayer = -1
     -- player.bowVec = toMouseVector(px, py)
@@ -186,7 +196,9 @@ function player:draw()
         
         --if player.stunTimer > 0 then love.graphics.setShader(shaders.whiteout) end
 
-    player.anim:draw(sprites.playerSheet, player:getX(), player:getY()-2, nil, player.dirX, 1, 9.5, 10.5)
+    --player.anim:draw(sprites.player.playerWalkSheet, player:getX(), player:getY(), nil, player.dirX, 1, 15, 15)
+    player.anim:draw(sprites.player.playerWalkSheet, player:getX() - 8 , player:getY() - 16, nil, player.dirX * player.scaleX, player.scaleX, 16, 32)
+
 
    -- love.graphics.setShader()
 

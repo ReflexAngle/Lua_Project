@@ -1,4 +1,4 @@
-Camera = require "libraries/hump/camera"
+Camera = require "libs/hump/camera"
 cam = Camera(0, 0, scale)
 cam.smoother = Camera.smooth.damped(8)
 

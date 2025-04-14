@@ -3,11 +3,68 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "darkmap.tmx",
+    "activeFile": "C:/Users/valro/Desktop/legend-of-lua-main/maps/test2.tmx",
     "expandedProjectPaths": [
+        "."
     ],
     "fileStates": {
         "": {
+            "scaleInDock": 1
+        },
+        "#lightmap": {
+            "scaleInDock": 1
+        },
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/llghtmap.tmx": {
+            "expandedObjectLayers": [
+                2
+            ],
+            "scale": 2,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 288,
+                "y": 192
+            }
+        },
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/llghtmap.tmx#lightmap": {
+            "scaleInDock": 1.5
+        },
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/menu.tmx": {
+            "scale": 0.5185416666666666,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 856.2474889513862,
+                "y": 426.19525914021693
+            }
+        },
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/menu.tmx#overworld": {
+            "scaleInDock": 1
+        },
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/test.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 300,
+                "y": 18.5
+            }
+        },
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/test.tmx#overworld": {
+            "scaleInDock": 1
+        },
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/test.tmx#overworld-edit": {
+            "scaleInDock": 1
+        },
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/test2.tmx": {
+            "expandedObjectLayers": [
+                7
+            ],
+            "scale": 1.5,
+            "selectedLayer": 9,
+            "viewCenter": {
+                "x": 584,
+                "y": 192
+            }
+        },
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/test2.tmx#overworld-edit": {
             "scaleInDock": 1
         },
         "OverWorld.tsx": {
@@ -21,22 +78,49 @@
                 "x": 45.333333333333336,
                 "y": 434.99999999999994
             }
+        },
+        "test2.tmx": {
+            "scale": 0.43211805555555555,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 286.95861791884295,
+                "y": 175.87786259541986
+            }
+        },
+        "test2.tmx#overworld-edit": {
+            "scaleInDock": 1
+        },
+        "test3.tmx": {
+            "scale": 0.43211805555555555,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 286.95861791884295,
+                "y": 296.21534752912817
+            }
+        },
+        "test3.tmx#overworld-edit": {
+            "scaleInDock": 1
         }
     },
     "last.exportedFilePath": "C:/Users/valro/Desktop/School 25'/AOOP/Lua_Project/newGame/maps",
     "last.externalTilesetPath": "C:/Users/valro/Desktop/School 25'/AOOP/Lua_Project/newGame/maps/gfx",
-    "last.imagePath": "C:/Users/valro/Desktop/School 25'/AOOP/Lua_Project/newGame/maps/gfx",
-    "map.height": 30,
+    "last.imagePath": "C:/Users/valro/Desktop/School 25'/AOOP/Lua_Project/newGame/maps/_tilesets",
+    "map.height": 24,
     "map.lastUsedExportFilter": "Lua files (*.lua)",
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
-    "map.width": 40,
+    "map.width": 36,
     "openFiles": [
-        "darkmap.tmx"
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/menu.tmx",
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/test2.tmx",
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/llghtmap.tmx"
     ],
     "project": "Test.tiled-project",
     "recentFiles": [
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/menu.tmx",
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/test2.tmx",
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/llghtmap.tmx",
         "darkmap.tmx",
         "OverWorld.tsx"
     ],

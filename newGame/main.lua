@@ -1,30 +1,26 @@
 --local saveData = require("scripts/events/saveDataEvent")
 local cameraFollow = require("src/camera/cameraFollow")
-
 --local normalize = require("scripts/math/normalization")
 local enemy = require("src/enemies/enemyBehavior")
--- setting bg sprites   
---local sprites = {
-    --    background = love.graphics.newImage("assets/imgs/background.png"),
-    --}
 
 function love.load()
     print("game loading")
+    
     require("src/startup/gameStart")
     gameStart()
-    loadMap("darkmap")
+    createNewSave()
+
+    loadMap("lightmap")
     colliderToggle = false
-        
-    
---    --createNewSave()
+   --create save point
 
     enemySpawnTimer = 0
     enemySpawnInterval = 2 -- Spawn an enemy every 2 seconds
 end
 
 function love.update(dt)
-    
     updateAll(dt)
+
 
     enemySpawnTimer = enemySpawnTimer + dt
     if enemySpawnTimer >= enemySpawnInterval then
@@ -34,7 +30,9 @@ function love.update(dt)
     
     if player then
         print("following the player")
-        cameraFollow.FollowPlayer(player)
+        print("player state: ", player.state)
+        print("player pos X : ", player.x)
+        --cameraFollow.FollowPlayer(player)
     end
     -- if player then
     --     enemy.EnemyMove(player.collider:getX(), player.collider:getY(), dt)
@@ -42,29 +40,19 @@ function love.update(dt)
 end
     
 function love.draw()
-    -- draw background
-    --love.graphics.draw(sprites.background, 0, 0, 0, love.graphics.getWidth()/sprites.background:getWidth(), love.graphics.getHeight()/sprites.background:getHeight())
-    cameraFollow.Apply()
-    
-    -- draws gamemap
-    if gameMap then gameMap:draw() end
+    --cameraFollow.Apply()
+    --drawBeforeCamera()
+    cam:attach()
+          drawCamera()
+          if colliderToggle then
+              world:draw()
+             --particleWorld:draw()
+          end
+    cam:detach()
+    --drawAfterCamera()
 
-    -- draw  before camera method
-    -- cam:attach()
-    -- drawCamera()
-    if colliderToggle and world.draw then
-        world:draw()
-        --particleWorld:draw()
-    end
-    if player and player.draw then
-       player:draw()
-
-    end
     enemy.DrawEnemy()
-    
-    --cam:detach()
-    -- draw after cam method
-    cameraFollow.Reset()
+    --cameraFollow.Reset()
 
     if player and player.drawHearts then
         player:drawHearts()

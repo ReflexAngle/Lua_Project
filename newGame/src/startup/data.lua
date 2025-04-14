@@ -7,12 +7,12 @@
        data.playerX = 0 -- player's X position
        data.playerY = 0 -- player's Y position
 --     data.maxHealth = 4 -- maximum number of hearts
-     data.money = 0 -- amount of currency
+      data.money = 0 -- amount of currency
 --     data.keys = 0 -- number of keys
-       data.map = "TestMap4" -- currently loaded map
+       data.map = "lightmap" -- currently loaded map
 --     data.outfit = 1 -- which cloak is equipped
 
---     if fileNumber == nil then fileNumber = 1 end
+    if fileNumber == nil then fileNumber = 1 end
      data.fileNumber = fileNumber -- which file are we using
 
 --     -- Currently, can equip an item to Z and X 
@@ -29,7 +29,7 @@
 --     data.maxBombCount = 20
 
 --     -- table that keeps track of breakables that have been destroyed
---     data.breakables = {}
+     data.breakables = {}
 
 --     -- table that keeps track of chests that have been opened
 --     data.chests = {}
@@ -86,7 +86,7 @@ end
 function startFresh(fileNumber)
     createNewSave(fileNumber)
     data.map = "test"
-    data.playerX = 106
+    data.playerX = 200
     data.playerY = 300
     player.state = 0
 end

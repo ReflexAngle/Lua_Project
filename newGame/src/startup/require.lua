@@ -7,7 +7,7 @@ function requireAll()
      require("src/startup/data")
 
     -- Utilities
-       --require("src/utils/cam")
+       require("src/utils/cam")
        require("src/utils/destroyAll")
        require("src/math/normalization")
        
