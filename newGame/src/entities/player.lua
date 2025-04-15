@@ -14,6 +14,7 @@ player.scaleX = 1
 player.speed = 90
 player.animSpeed = 0.1 --.14
 player.walking = false
+player.aiming = false
 player.animTimer = 0
 player.max_hearts = 5
 player.hearts = 3
@@ -26,7 +27,6 @@ player.bowRecoveryTime = 0.25
 player.holdSprite = sprites.items.heart
 player.attackDir = vector(1, 0)
 player.comboCount = 0
-player.aiming = false
 player.arrowOffX = 0
 player.arrowOffX = 0
 player.bowVec = vector(1, 0)
@@ -59,50 +59,17 @@ player:setLinearDamping(player.baseDamping)
         }
     end, player.max_hearts)
 
+--animations     
 player.grid = anim8.newGrid(16, 32, sprites.player.playerWalkSheet:getWidth(), sprites.player.playerWalkSheet:getHeight())
 
 player.animations = {}
 player.animations.idle = anim8.newAnimation(player.grid('1-1', 1), player.animSpeed)
-player.animations.walkUp = anim8.newAnimation(player.grid('3-4', 3), player.animSpeed)
+player.animations.walkUp = anim8.newAnimation(player.grid('1-4', 3), player.animSpeed)
 player.animations.walkDown = anim8.newAnimation(player.grid('1-4', 1), player.animSpeed)
-player.animations.walkLeft = anim8.newAnimation(player.grid('2-4', 4), player.animSpeed)
+player.animations.walkLeft = anim8.newAnimation(player.grid('1-4', 4), player.animSpeed)
 player.animations.walkRight = anim8.newAnimation(player.grid('1-4', 2), player.animSpeed)
 
-player.animations.attackDown = anim8.newAnimation(player.grid('1-2', 5), player.animSpeed)
-player.animations.attackUp = anim8.newAnimation(player.grid('1-2', 6), player.animSpeed)
-player.animations.attackRight = anim8.newAnimation(player.grid('1-2', 7), player.animSpeed)
-player.animations.attackLeft = anim8.newAnimation(player.grid('1-2', 8), player.animSpeed)
---player.animations.downRight = anim8.newAnimation(player.grid('1-2', 1), player.animSpeed)
---player.animations.downLeft = anim8.newAnimation(player.grid('1-2', 1), player.animSpeed)
---player.animations.upRight = anim8.newAnimation(player.grid('1-2', 2), player.animSpeed)
---player.animations.upLeft = anim8.newAnimation(player.grid('1-2', 2), player.animSpeed)
--- player.animations.idle = anim8.newAnimation(grid('1-1', 1), 0.1),
-
--- player.animations.walkUp == anim8.newAnimation(grid('3-4', 3), 0.1),
--- -- attack anims
--- player.animations.attackDown = anim8.newAnimation(grid('1-2', 5), 0.1),
--- player.animations.attackUp = anim8.newAnimation(grid('1-2', 6), 0.1),
--- player.animations.attackRight = anim8.newAnimation(grid('1-2', 7), 0.1),
--- player.animations.attackLeft = anim8.newAnimation(grid('1-2', 8), 0.1)
-
--- player.animations.swordDownRight = anim8.newAnimation(player.grid('1-2', 1), player.animSpeed)
--- player.animations.swordDownLeft = anim8.newAnimation(player.grid('1-2', 1), player.animSpeed)
--- player.animations.swordUpRight = anim8.newAnimation(player.grid('1-2', 2), player.animSpeed)
--- player.animations.swordUpLeft = anim8.newAnimation(player.grid('1-2', 2), player.animSpeed)
--- player.animations.useDownRight = anim8.newAnimation(player.grid(2, 1), player.animSpeed)
--- player.animations.useDownLeft = anim8.newAnimation(player.grid(2, 1), player.animSpeed)
--- player.animations.useUpRight = anim8.newAnimation(player.grid(2, 2), player.animSpeed)
--- player.animations.useUpLeft = anim8.newAnimation(player.grid(2, 2), player.animSpeed)
--- player.animations.hold = anim8.newAnimation(player.grid(1, 1), player.animSpeed)
--- player.animations.rollDown = anim8.newAnimation(player.grid('1-3', 4), 0.11)
--- player.animations.rollUp = anim8.newAnimation(player.grid('1-3', 5), 0.11)
--- player.animations.stopDown = anim8.newAnimation(player.grid('1-3', 6), 0.22, function() player.anim = player.animations.idleDown end)
--- player.animations.stopUp = anim8.newAnimation(player.grid('1-3', 7), 0.22, function() player.anim = player.animations.idleUp end)
--- player.animations.idleDown = anim8.newAnimation(player.grid('1-4', 8), {1.2, 0.1, 2.4, 0.1})
--- player.animations.idleUp = anim8.newAnimation(player.grid('1-2', 9), 0.22)
-
 player.anim = player.animations.idle
-
 
 player.buffer = {} -- input buffer
 
@@ -121,9 +88,11 @@ function player:update(dt)
             
             if player.anim then player.anim:gotoFrame(1) end
         end
-        player.anim:update(dt)
     end
 
+   
+    player.anim:update(dt)
+   
     --update current anim
 end
 
@@ -158,8 +127,9 @@ function player:draw()
         end
     end
 
-    local px = player:getX()
-    local py = player:getY()
+    local x, y = player:getX(), player:getY()
+    local px, py = player:getX(), player:getY()
+
 
     -- if px and py then -- Make sure position is valid
     --     love.graphics.setColor(1, 0, 0, 1) -- Bright red, fully opaque
@@ -198,7 +168,7 @@ function player:draw()
         -- Removed the '-2' from player:getY()
         -- Origin (8, 16) assumes the sprite is centered within its 16x32 frame
 
-     player.anim:draw(sprites.player.playerWalkSheet, player:getX(), player:getY(), nil, player.dirX * player.scaleX, player.scaleX, 8, 16) 
+     player.anim:draw(sprites.player.playerWalkSheet, x, y, 0, 1, 1, 8, 16) 
     end
    
    -- if player.state == 1.1 and swLayer == -1 then
@@ -292,33 +262,32 @@ function player:handleMovementAndAnimation() -- Use dot (.) not colon (:)
     local isMoving = false 
     local targetAnim = nil
 
-    -- Check keyboard input and set temporary move direction & animation
-    -- Using elseif for opposite directions is slightly cleaner
+    -- movement
     if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
+        isMoving = true
         moveX = 1
         player.dirX  = 1
         targetAnim = player.animations.walkRight
-        isMoving = true
     end
     if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
+        isMoving = true
         moveX = -1
         player.dirX = -1
         targetAnim = player.animations.walkLeft
-        isMoving = true
     end
 
     if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
+        isMoving = true
         moveY = 1
         player.dirY = 1
         targetAnim = player.animations.walkDown 
-        isMoving = true
     end 
     
     if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
+        isMoving = true
         moveY = -1
         player.dirY = -1
         targetAnim = player.animations.walkUp
-        isMoving = true
     end
 
     -- Set animation ONLY if it's different or if movement stopped/started

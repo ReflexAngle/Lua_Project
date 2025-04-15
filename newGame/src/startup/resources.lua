@@ -2,7 +2,6 @@ sprites = {}
 
 sprites.player = {}
 sprites.player.playerWalkSheet = love.graphics.newImage('sprites/player/playerWalkSheet2.png')
-assert(sprites.player.playerWalkSheet, "Player spritesheet failed to load! Check path/file.")
 
 sprites.effects = {}
 sprites.effects.slice = love.graphics.newImage('sprites/effects/Slashhh.png')
