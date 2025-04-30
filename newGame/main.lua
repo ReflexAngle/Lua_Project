@@ -9,7 +9,6 @@ function love.load()
     require("src/startup/gameStart")
     gameStart()
     createNewSave()
-
     loadMap("lightmap")
     colliderToggle = false
    --create save point
@@ -19,7 +18,8 @@ function love.load()
 end
 
 function love.update(dt)
-    updateAll(dt)
+  
+    updateAll(dt) 
 
 
     enemySpawnTimer = enemySpawnTimer + dt
@@ -33,56 +33,61 @@ function love.update(dt)
         print("player state: ", player.state)
         print("player pos X : ", player.x)
         print("player pos y : ", player.y)
-
+        
         --cameraFollow.FollowPlayer(player)
     end
     -- if player then
-    --     enemy.EnemyMove(player.collider:getX(), player.collider:getY(), dt)
-    -- end
-end
-    
-function love.draw()
-    --cameraFollow.Apply()
-    --drawBeforeCamera()
-    cam:attach()
-          drawCamera()
-          if colliderToggle then
-              world:draw()
-             --particleWorld:draw()
-          end
-    cam:detach()
-
-    drawAfterCamera()
-
-
-    enemy.DrawEnemy()
-    --cameraFollow.Reset()
-
-    -- if player and player.drawHearts then
-    --     player:drawHearts()
-    --  end
-
-end
-
---player:draw(offsetX, offsetY, scaledWidth, scaledHeight)
---player:drawHearts()
-
-function love.keypressed(key)
-    if key == "escape" then
-        love.event.quit()
-
-
-    elseif key == "f12" then
-        local isFullscreen = love.window.getFullscreen()
-        love.window.setFullscreen(not isFullscreen)
-
-
-    elseif key == "f9" then -- Or any key you prefer
-        colliderToggle = not colliderToggle
-
-    elseif key == "space" then -- Or "k", "z", etc.
-        if player and player.attack then -- Check if player and the method exist
-           player:attack()
-        end
+        --     enemy.EnemyMove(player.collider:getX(), player.collider:getY(), dt)
+        -- end
     end
-end
+    
+    function love.draw()
+        --cameraFollow.Apply()
+        --drawBeforeCamera()
+        cam:attach()
+        drawCamera()
+        if colliderToggle then
+            world:draw()
+            --particleWorld:draw()
+        end
+        cam:detach()
+        
+        drawAfterCamera()
+        
+        
+        enemy.DrawEnemy()
+        --cameraFollow.Reset()
+        
+        -- if player and player.drawHearts then
+            --     player:drawHearts()
+            --  end
+            
+        end
+        
+        --player:draw(offsetX, offsetY, scaledWidth, scaledHeight)
+        --player:drawHearts()
+        
+        function love.keypressed(key)
+            if key == "escape" then
+                love.event.quit()
+
+            elseif key == "f12" then
+                local isFullscreen = love.window.getFullscreen()
+                love.window.setFullscreen(not isFullscreen)
+                
+                
+            elseif key == "f9" then -- Collider toggle
+                colliderToggle = not colliderToggle
+                
+            elseif key == "space" then -- Or "k", "z", etc.
+                if player and player.attack then -- Check if player and the method exist
+                    player:attack()
+                end
+            elseif key == "a" then 
+                if player then -- Check if player and the method exist
+                    --player:attack()
+                    print("The key a was pressed")
+                end
+            end
+        end
+    

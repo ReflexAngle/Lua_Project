@@ -1,8 +1,9 @@
 local ObjectPool = require("src/designPatterns/objectPool")
 local normalize = require("src/math/normalization")
--- player = world:newBSGRectangleCollider(234, 184, 12, 12, 3)
+
+
+
 player = world:newBSGRectangleCollider(275, 180, 12, 12, 3)
---player = world:newBSGRectangleCollider(204,184 ,15, 15, 4 )
 player.x = 0
 player.y = 0
 player.dir = "down"
@@ -13,7 +14,6 @@ player.prevDirY = 1
 player.scaleX = 1
 player.speed = 90
 player.animSpeed = 0.1 --.14
-player.walking = false
 player.aiming = false
 player.animTimer = 0
 player.max_hearts = 5
@@ -44,6 +44,7 @@ player.rotateMargin = 0.25
 -- 11 = Hold item
 -- 12 = Transition
 player.state = 0
+
 
 player:setCollisionClass("Player")
 player:setFixedRotation(true)
@@ -76,25 +77,24 @@ player.buffer = {} -- input buffer
 function player:update(dt)
 
 
-    --if pause.active then player.anim:update(dt) end
+  --  if pause.active then player.anim:update(dt) end
     if  player.state == 0 then 
-        player:setLinearDamping(player.baseDamping)
-        player:handleMovementAndAnimation()
-
+        self:setLinearDamping(self.baseDamping)
+        self:handleMovement()
     elseif  player.state == 1 then
-        if player.anim and player.anim.position == #player.anim.frames then
-            player.state = 0
-            player.anim = player.animations.idle
-            
-            if player.anim then player.anim:gotoFrame(1) end
-        end
+    --sword attack logic
+    -- if player.anim and player.anim.position == #player.anim.frames then
+    --     player.state = 0
+    --     player.anim = player.animations.idle
+    --     if player.anim then player.anim:gotoFrame(1) end
+    -- end
     end
+    if self.anim then
+        self.anim:update(dt)
+    end
+end
 
    
-    player.anim:update(dt)
-   
-    --update current anim
-end
 
 function player:draw()
     
@@ -255,91 +255,115 @@ function player:draw()
 -- Corrected function in src/entities/player_setup.lua (or wherever player methods are defined)
 
 
-function player:handleMovementAndAnimation() -- Use dot (.) not colon (:)
-    -- This function assumes it's only called when player.state == 0
+-- function player:handleMovementAndAnimation() -- Use dot (.) not colon (:)
+--     -- This function assumes it's only called when player.state == 0
 
-    local moveX, moveY = 0, 0
-    local isMoving = false 
-    local targetAnim = nil
+--     local moveX, moveY = 0, 0
+--     local isMoving = false 
+--     local targetAnim = nil
 
-    -- movement
-    if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
-        isMoving = true
-        moveX = 1
-        player.dirX  = 1
-        targetAnim = player.animations.walkRight
-    end
-    if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
-        isMoving = true
-        moveX = -1
-        player.dirX = -1
-        targetAnim = player.animations.walkLeft
-    end
+--     -- movement
+--     if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
+--         isMoving = true
+--         moveX = 1
+--         player.dirX  = 1
+--         targetAnim = player.animations.walkRight
+--     end
+--     if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
+--         isMoving = true
+--         moveX = -1
+--         player.dirX = -1
+--         targetAnim = player.animations.walkLeft
+--     end
 
-    if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
-        isMoving = true
-        moveY = 1
-        player.dirY = 1
-        targetAnim = player.animations.walkDown 
-    end 
+--     if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
+--         isMoving = true
+--         moveY = 1
+--         player.dirY = 1
+--         targetAnim = player.animations.walkDown 
+--     end 
     
-    if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
-        isMoving = true
-        moveY = -1
-        player.dirY = -1
-        targetAnim = player.animations.walkUp
-    end
+--     if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
+--         isMoving = true
+--         moveY = -1
+--         player.dirY = -1
+--         targetAnim = player.animations.walkUp
+--     end
 
-    -- Set animation ONLY if it's different or if movement stopped/started
-    if isMoving then
-        if player.anim ~= targetAnim then
-            player.anim = targetAnim
-            if player.anim then player.anim:gotoFrame(1) end -- Reset new animation
-        end
-    else
-        -- Player stopped moving, switch to idle if not already idle
-        if player.anim ~= player.animations.idle then
-             player.anim = player.animations.idle -- Corrected variable name
-             if player.anim then player.anim:gotoFrame(1) end -- Reset idle animation
-        end
-    end
+--     -- Set animation ONLY if it's different or if movement stopped/started
+--     if isMoving then
+--         if player.anim ~= targetAnim then
+--             player.anim = targetAnim
+--             if player.anim then player.anim:gotoFrame(1) end -- Reset new animation
+--         end
+--     else
+--         -- Player stopped moving, switch to idle if not already idle
+--         if player.anim ~= player.animations.idle then
+--              player.anim = player.animations.idle -- Corrected variable name
+--              if player.anim then player.anim:gotoFrame(1) end -- Reset idle animation
+--         end
+--     end
 
-    -- Normalize diagonal movement - this call should work fine now
-    -- Make sure the 'normalize' table is accessible globally or required in this file
-    if normalize and normalize.NormalizedVector then
-    moveX, moveY = normalize.NormalizedVector(moveX, moveY)    else
-        print("Warning: normalize module not found/loaded.")
-    end
+--     -- Normalize diagonal movement - this call should work fine now
+--     -- Make sure the 'normalize' table is accessible globally or required in this file
+--     if normalize and normalize.NormalizedVector then
+--     moveX, moveY = normalize.NormalizedVector(moveX, moveY)    else
+--         print("Warning: normalize module not found/loaded.")
+--     end
 
-    -- Calculate final velocity vector using player's speed
-    local vec = { x = moveX * player.speed, y = moveY * player.speed } -- Use player.
-        print("Calculated Velocity Vec: x=", vec.x, "y=", vec.y, "| Speed:", player.speed) 
+--     -- Calculate final velocity vector using player's speed
+--     local vec = { x = moveX * player.speed, y = moveY * player.speed } -- Use player.
+--         print("Calculated Velocity Vec: x=", vec.x, "y=", vec.y, "| Speed:", player.speed) 
 
-    if player.collider then -- Check collider exists
-       player.collider:setLinearVelocity(vec.x, vec.y) -- Use player.
-    end
+--     if player.collider then -- Check collider exists
+--        self:setLinearVelocity(vec.x, vec.y) -- Use player.
+--     end
 
-    -- Update facing direction based on movement input
-    if moveX ~= 0 then
-        player.dirX = moveX 
-    end
-    if moveY ~= 0 then
-        player.dirY = moveY 
-    end
+--     -- Update facing direction based on movement input
+--     if moveX ~= 0 then
+--         player.dirX = moveX 
+--     end
+--     if moveY ~= 0 then
+--         player.dirY = moveY 
+--     end
     
-    -- Update string direction variable based on prioritized input
-    if moveY == -1 then
-        player.dir = "up" 
-    elseif moveY == 1 then
-        player.dir = "down" 
-    elseif moveX == -1 then
-        player.dir = "left" 
-    elseif moveX == 1 then
-        player.dir = "right" 
-    end
+--     -- Update string direction variable based on prioritized input
+--     if moveY == -1 then
+--         player.dir = "up" 
+--     elseif moveY == 1 then
+--         player.dir = "down" 
+--     elseif moveX == -1 then
+--         player.dir = "left" 
+--     elseif moveX == 1 then
+--         player.dir = "right" 
+--     end
 
    
-end 
+-- end 
+
+function player:handleMovement(dt)
+    local moveX, moveY = 0, 0
+  local animTo = self.animations.idle
+
+  if love.keyboard.isDown("d","right") then moveX=1; animTo=self.animations.walkRight; self.dir="right" end
+  if love.keyboard.isDown("a","left")  then moveX=-1; animTo=self.animations.walkLeft;  self.dir="left"  end
+  if love.keyboard.isDown("s","down")  then moveY=1; animTo=self.animations.walkDown;  self.dir="down"  end
+  if love.keyboard.isDown("w","up")    then moveY=-1; animTo=self.animations.walkUp;    self.dir="up"    end
+
+  -- Switch animation only when it changes
+  if self.anim ~= animTo then
+    self.anim = animTo
+    self.anim:gotoFrame(1)
+  end
+
+    -- Normalize diagonal movement (so speed is consistent)
+    local nx, ny = normalize.NormalizedVector(moveX, moveY)
+    --local vx, vy = nx * self.speed, ny * self.speed
+    --self:setLinearVelocity(vx, vy)
+    self:setLinearVelocity(nx * self.speed, ny * self.speed)
+
+end
+
 
 function player:swingSword()
 
