@@ -24,12 +24,13 @@ function gameStart()
     -- The game's graphics scale up, this method finds the right ratio
     setScale()
     
-    vector = require "libs/hump/vector"
-    --flux = require "libs/flux/flux"
-    --require "libraries/tesound"
-    --require("libraries/show")
+    vector = require ("libs/hump/vector")
+    flux = require ("libs/flux/flux")
+    require ("libs/tesound")
+    require("libs/show")
     anim8 = require("libs/anim8")
     sti = require("libs/Simple-Tiled-Implementation/sti")
+    signal = require("libs/hump/signal")
     
     
     local windfield = require("libs/windfield")
@@ -69,7 +70,7 @@ function initGlobals()
     -- game state
     -- 0: main menu
     -- 1: gameplay
-    gamestate = 1
+    gamestate = 0
     --globalStun = 0
 end
 
@@ -99,5 +100,5 @@ end
         windowHeight = love.graphics.getHeight()
         setScale()
     --pause:init()
-    --initFonts()
+    initFonts()
 end

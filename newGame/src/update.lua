@@ -15,8 +15,7 @@ function updateGame(dt)
     --miscUpdate(dt)
     --if globalStun > 0 then return end
 
---    flux.update(dt)
-
+    flux.update(dt)
     player:update(dt)
     world:update(dt)
     walls:update(dt)

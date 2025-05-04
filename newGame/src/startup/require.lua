@@ -1,7 +1,7 @@
 function requireAll()
     require("src/startup/collisionClasses")
     createCollisionClasses()
-
+     
     -- Resources / Data
      require("src/startup/resources")
      require("src/startup/data")
@@ -18,7 +18,7 @@ function requireAll()
     -- require("src/utils/shaders")
     -- require("src/utils/shake")
     -- require("src/utils/triggers")
-    -- require("src/utils/utils")
+      require("src/utils/utils")
 
     -- Core gameplay
     require("src/entities/player")
@@ -56,14 +56,14 @@ function requireAll()
     -- require("src/spells/flame")
 
     -- Levels
-    -- require("src/levels/curtain")
+ require("src/levels/curtain")
     require("src/levels/loadMap")
     -- require("src/levels/npc")
-    -------- require("src/levels/transition")
+     --require("src/levels/transition")
      require("src.levels.walls")
 
     -- UI
    HUD = require("src/ui/hud")
-    -- require("src/ui/menu")
+     require("src/ui/menu")
     -- require("src/ui/pause")
 end

@@ -1,13 +1,13 @@
 local enemy = require("src/enemies/enemyBehavior")
 
 function drawBeforeCamera()
-   -- menu:draw()
+    menu:draw()
 end
 
 function drawCamera()
 
     if gamestate == 0 then return end
-    --setWhite()
+    setWhite()
 
     if gameMap.layers["Background"] then
         gameMap:drawLayer(gameMap.layers["Background"])
@@ -66,11 +66,10 @@ function drawCamera()
 end
 
 function drawAfterCamera()
-    --curtain:draw()
+    curtain:draw()
     if gamestate == 0 then return end
-    if HUD and HUD.draw() then
-        HUD.draw()
-    end
+    HUD.draw()
+    
         
     -- end--drawHUD()
     --pause:draw()

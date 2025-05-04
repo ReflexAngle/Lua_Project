@@ -3,10 +3,11 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "C:/Users/valro/Desktop/legend-of-lua-main/maps/test2.tmx",
+    "activeFile": "C:/Users/valro/Desktop/legend-of-lua-main/maps/llghtmap.tmx",
     "expandedProjectPaths": [
         "."
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "": {
             "scaleInDock": 1
@@ -21,19 +22,27 @@
             "scale": 2,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 288.25,
-                "y": 192.25
+                "x": 288.5,
+                "y": 192
             }
         },
         "C:/Users/valro/Desktop/legend-of-lua-main/maps/llghtmap.tmx#lightmap": {
             "scaleInDock": 1.5
         },
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/menu.lua": {
+            "scale": 0.75,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": -538.6666666666666,
+                "y": -179.33333333333331
+            }
+        },
         "C:/Users/valro/Desktop/legend-of-lua-main/maps/menu.tmx": {
             "scale": 0.5185416666666666,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 240.0964242667739,
-                "y": 174.52792286058656
+                "x": 239.1321815990358,
+                "y": 173.56368019284855
             }
         },
         "C:/Users/valro/Desktop/legend-of-lua-main/maps/menu.tmx#overworld": {
@@ -43,8 +52,8 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 300,
-                "y": 18.5
+                "x": 169,
+                "y": 143.75
             }
         },
         "C:/Users/valro/Desktop/legend-of-lua-main/maps/test.tmx#overworld": {
@@ -60,12 +69,20 @@
             "scale": 1.5,
             "selectedLayer": 9,
             "viewCenter": {
-                "x": 288.3333333333333,
-                "y": 175.66666666666663
+                "x": 48,
+                "y": 88.33333333333334
             }
         },
         "C:/Users/valro/Desktop/legend-of-lua-main/maps/test2.tmx#overworld-edit": {
             "scaleInDock": 1
+        },
+        "C:/Users/valro/Desktop/startMenu.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 0,
+                "y": 0
+            }
         },
         "OverWorld.tsx": {
             "scaleInDock": 1,
@@ -83,8 +100,8 @@
             "scale": 0.43211805555555555,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 286.95861791884295,
-                "y": 175.87786259541986
+                "x": 286.9586179188429,
+                "y": 295.0582563278425
             }
         },
         "test2.tmx#overworld-edit": {
@@ -94,8 +111,8 @@
             "scale": 0.43211805555555555,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 286.95861791884295,
-                "y": 296.21534752912817
+                "x": 286.9586179188429,
+                "y": 295.0582563278425
             }
         },
         "test3.tmx#overworld-edit": {
@@ -105,12 +122,12 @@
     "last.exportedFilePath": "C:/Users/valro/Desktop/School 25'/AOOP/Lua_Project/newGame/maps",
     "last.externalTilesetPath": "C:/Users/valro/Desktop/School 25'/AOOP/Lua_Project/newGame/maps/gfx",
     "last.imagePath": "C:/Users/valro/Desktop/School 25'/AOOP/Lua_Project/newGame/maps/_tilesets",
-    "map.height": 24,
-    "map.lastUsedExportFilter": "Lua files (*.lua)",
+    "map.height": 22,
+    "map.lastUsedExportFilter": "Tiled map files (*.tmx *.xml)",
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
-    "map.width": 36,
+    "map.width": 30,
     "openFiles": [
         "C:/Users/valro/Desktop/legend-of-lua-main/maps/menu.tmx",
         "C:/Users/valro/Desktop/legend-of-lua-main/maps/test2.tmx",
@@ -118,9 +135,10 @@
     ],
     "project": "Test.tiled-project",
     "recentFiles": [
-        "C:/Users/valro/Desktop/legend-of-lua-main/maps/menu.tmx",
         "C:/Users/valro/Desktop/legend-of-lua-main/maps/test2.tmx",
+        "C:/Users/valro/Desktop/legend-of-lua-main/maps/menu.tmx",
         "C:/Users/valro/Desktop/legend-of-lua-main/maps/llghtmap.tmx",
+        "C:/Users/valro/Desktop/startMenu.tmx",
         "darkmap.tmx",
         "OverWorld.tsx"
     ],

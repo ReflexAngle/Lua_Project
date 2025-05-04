@@ -3,13 +3,17 @@ local cameraFollow = require("src/camera/cameraFollow")
 --local normalize = require("scripts/math/normalization")
 local enemy = require("src/enemies/enemyBehavior")
 
+
+-- loading
 function love.load()
     print("game loading")
-    
     require("src/startup/gameStart")
     gameStart()
-    createNewSave()
-    loadMap("lightmap")
+    --createNewSave()
+    currMap = "menu"
+
+    --loadMap("lightmap")
+    loadMap(currMap)
     colliderToggle = false
    --create save point
 
@@ -17,57 +21,56 @@ function love.load()
     enemySpawnInterval = 2 -- Spawn an enemy every 2 seconds
 end
 
+
+
+
+-- update
 function love.update(dt)
-  
-    updateAll(dt) 
+    if gamestate == 1 then
+        updateAll(dt) 
+
+        enemySpawnTimer = enemySpawnTimer + dt
+        if enemySpawnTimer >= enemySpawnInterval then
+            enemy.spawnEnemy(love.graphics.getWidth(), love.graphics.getHeight())
+            enemySpawnTimer = 0
+        end
+    end
+end
 
 
-    enemySpawnTimer = enemySpawnTimer + dt
-    if enemySpawnTimer >= enemySpawnInterval then
-       enemy.spawnEnemy(love.graphics.getWidth(), love.graphics.getHeight())
-       enemySpawnTimer = 0
+
+
+-- drawing
+function love.draw()
+    --cameraFollow.Apply()
+    drawBeforeCamera()
+    cam:attach()
+    drawCamera()
+    if colliderToggle then
+        world:draw()
+        --particleWorld:draw()
     end
+    cam:detach()
+    drawAfterCamera()
+
     
-    if player then
-        print("following the player")
-        print("player state: ", player.state)
-        print("player pos X : ", player.x)
-        print("player pos y : ", player.y)
-        
-        --cameraFollow.FollowPlayer(player)
+    enemy.DrawEnemy()
+end
+
+
+
+
+
+
+-- util functs
+function love.keypressed(key)
+    if currMap == "menu" and (key == "return" or key == "space") then
+        print("the map should change gamestate: " )
+        print(gamestate)
+        gamestate = 1
+        currMap = "lightmap"
+        loadMap(currMap)
     end
-    -- if player then
-        --     enemy.EnemyMove(player.collider:getX(), player.collider:getY(), dt)
-        -- end
-    end
-    
-    function love.draw()
-        --cameraFollow.Apply()
-        --drawBeforeCamera()
-        cam:attach()
-        drawCamera()
-        if colliderToggle then
-            world:draw()
-            --particleWorld:draw()
-        end
-        cam:detach()
-        
-        drawAfterCamera()
-        
-        
-        enemy.DrawEnemy()
-        --cameraFollow.Reset()
-        
-        -- if player and player.drawHearts then
-            --     player:drawHearts()
-            --  end
-            
-        end
-        
-        --player:draw(offsetX, offsetY, scaledWidth, scaledHeight)
-        --player:drawHearts()
-        
-        function love.keypressed(key)
             if key == "escape" then
                 love.event.quit()
 
@@ -75,19 +78,16 @@ function love.update(dt)
                 local isFullscreen = love.window.getFullscreen()
                 love.window.setFullscreen(not isFullscreen)
                 
-                
             elseif key == "f9" then -- Collider toggle
                 colliderToggle = not colliderToggle
-                
-            elseif key == "space" then -- Or "k", "z", etc.
-                if player and player.attack then -- Check if player and the method exist
-                    player:attack()
-                end
-            elseif key == "a" then 
-                if player then -- Check if player and the method exist
-                    --player:attack()
-                    print("The key a was pressed")
-                end
+            -- elseif key == 'space' then
+            --     --player:attack()
             end
-        end
+            -- if key == 'return' or key == 'tab' or key == 'e' then
+            --     if gamestate == 1 then
+            --         pause:toggle()
+            --     end
+            -- end
+end
+
     

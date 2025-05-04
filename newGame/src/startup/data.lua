@@ -2,22 +2,22 @@
 
 --     -- This represents the save data
        data = {}
---     data.saveCount = 0 -- times the game was saved
---     data.progress = 0 -- milestone tracker
+       data.saveCount = 0 -- times the game was saved
+       data.progress = 0 -- milestone tracker
        data.playerX = 0 -- player's X position
        data.playerY = 0 -- player's Y position
 --     data.maxHealth = 4 -- maximum number of hearts
       data.money = 0 -- amount of currency
---     data.keys = 0 -- number of keys
-       data.map = "lightmap" -- currently loaded map
---     data.outfit = 1 -- which cloak is equipped
+      data.keys = 0 -- number of keys
+      data.map = "" -- currently loaded map
+--    data.outfit = 1 -- which cloak is equipped
 
     if fileNumber == nil then fileNumber = 1 end
      data.fileNumber = fileNumber -- which file are we using
 
 --     -- Currently, can equip an item to Z and X 
         data.item = {}
---     data.item.left = "sword"
+       data.item.left = "sword"
 --     data.item.right = "bow"
 --     data.item.altL = "fire"
 --     data.item.altR = "fire"
@@ -79,8 +79,8 @@ function loadGame(fileNumber)
 
    -- loadMap(data.map, data.playerX, data.playerY)
     player.direction = "down"
-    --player.state = 0
-    --gamestate = 1
+    player.state = 0
+    gamestate = 1
 end
 
 function startFresh(fileNumber)
