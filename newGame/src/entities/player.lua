@@ -9,6 +9,8 @@ player.y = 0
 player.dir = "down"
 player.dirX = 1
 player.dirY = 1
+player.width = 12
+player.height = 12
 player.prevDirX = 1
 player.prevDirY = 1
 player.scaleX = 1
@@ -17,12 +19,23 @@ player.animSpeed = 0.1 --.14
 player.aiming = false
 player.animTimer = 0
 player.max_hearts = 5
-player.hearts = 3
+player.hearts = 4
 -- player.stunTimer = 0
 -- player.damagedTimer = 0
 player.damagedBool = 1
 player.damagedFlashTime = 0.05
 player.invincible = 0 -- timer
+player.sword = nil
+player.swing = {
+    active       = false,
+    timer        = 0,
+    duration     = 0.3,
+    startAngle   = -math.pi/4, -- 45° up
+    swingAngle   =  math.pi/2, -- 90° downward
+    x            = 0,
+    y            = 0,
+    currentAngle = 0
+}
 player.bowRecoveryTime = 0.25
 player.holdSprite = sprites.items.heart
 player.attackDir = vector(1, 0)
@@ -32,14 +45,10 @@ player.arrowOffX = 0
 player.bowVec = vector(1, 0)
 player.baseDamping = 1 --12
 player.dustTimer = 0
-player.rollDelayTimer = 0
 player.rotateMargin = 0.25
 -- 0 = Normal gameplay
--- 0.5 = Rolling
 -- 1 = Sword swing
--- 2 = Use (bomb)
--- 3 = Bow (3: bow drawn, 3.1: recover)
--- 4 = grapple (4: armed, 4.1: launching, 4.2: moving)
+-- 2 = Bow (3: bow drawn, 3.1: recover)
 -- 10 = Damage stun
 -- 11 = Hold item
 -- 12 = Transition
@@ -64,30 +73,63 @@ player:setLinearDamping(player.baseDamping)
 player.grid = anim8.newGrid(16, 32, sprites.player.playerWalkSheet:getWidth(), sprites.player.playerWalkSheet:getHeight())
 
 player.animations = {}
+--idle
 player.animations.idle = anim8.newAnimation(player.grid('1-1', 1), player.animSpeed)
+player.animations.idleDown = anim8.newAnimation(player.grid('1-1', 1), player.animSpeed)
+player.animations.idleRight = anim8.newAnimation(player.grid('1-1',2), player.animSpeed)
+player.animations.idleUp = anim8.newAnimation(player.grid('1-1', 3), player.animSpeed)
+player.animations.idleLeft = anim8.newAnimation(player.grid('1-1', 4), player.animSpeed)
+--walking
 player.animations.walkUp = anim8.newAnimation(player.grid('1-4', 3), player.animSpeed)
 player.animations.walkDown = anim8.newAnimation(player.grid('1-4', 1), player.animSpeed)
 player.animations.walkLeft = anim8.newAnimation(player.grid('1-4', 4), player.animSpeed)
 player.animations.walkRight = anim8.newAnimation(player.grid('1-4', 2), player.animSpeed)
 
-player.anim = player.animations.idle
+--attack anims
+player.animations.attackDown = anim8.newAnimation(player.grid('1-2', 5), .2)
+player.animations.attackUp = anim8.newAnimation(player.grid('1-2', 6), .2)
+player.animations.attackRight = anim8.newAnimation(player.grid('1-2', 7), .2)
+player.animations.attackLeft = anim8.newAnimation(player.grid('1-2', 8), .2)
+
+
+player.anim = player.animations.idleDown
 
 player.buffer = {} -- input buffer
 
 function player:update(dt)
-
-
   --  if pause.active then player.anim:update(dt) end
-    if  player.state == 0 then 
-        self:setLinearDamping(self.baseDamping)
-        self:handleMovement()
-    elseif  player.state == 1 then
-    --sword attack logic
-    -- if player.anim and player.anim.position == #player.anim.frames then
-    --     player.state = 0
-    --     player.anim = player.animations.idle
-    --     if player.anim then player.anim:gotoFrame(1) end
-    -- end
+    if  self.state == 0 then 
+        self:handleMovement(dt)
+    elseif  self.state == 1 then
+         self:setLinearVelocity((self.attackDir * 90):unpack())
+    elseif self.state == 1.1 then
+         self:setLinearVelocity(0,0)
+    end
+
+    -- countdown & transit
+    if self.state == 1 or self.state == 1.1 then
+        self.animTimer = self.animTimer - dt
+        if self.animTimer <= 0 then
+
+    if self.state == 1 then
+        -- switch to recovery
+        self.state     = 1.1
+        self.anim:gotoFrame(2)
+        self.animTimer = 0.25
+
+        -- spawn your slice effect at the hand pivot
+        local ox, oy = self:getHandOffset()
+        effects:spawn("slice",self:getX() + ox, self:getY() + oy,self.attackDir)
+
+        self:swordDamage()
+
+    elseif self.state == 1.1 then
+        -- back to idle
+        self.state = 0
+        self:resetAnimation()
+    end
+
+        end
     end
     if self.anim then
         self.anim:update(dt)
@@ -97,147 +139,42 @@ end
    
 
 function player:draw()
-    
-
-    -- Sword sprite
-    local swSpr = sprites.items.sword
-    local swX = 0
-    local swY = 0
-    local swLayer = -1
-    -- local arrowSpr = sprites.items.arrow
-    -- local bowSpr = sprites.items.bow1
-    --local hookSpr = sprites.items.grappleArmed
-    --if player.aiming and (player.animTimer > 0 or data.arrowCount < 1) then bowSpr = sprites.items.bow2 end
-    --if player.state == 4.1 or player.state == 4.2 then hookSpr = sprites.items.grappleHandle end
-
-    local swordRot = 0
-    if player.state == 1.1 then
-        local tempVec = 0
-        if player.comboCount % 2 == 0 then
-            tempVec = player.attackDir:rotated(math.pi/2)
-        else
-            tempVec = player.attackDir:rotated(math.pi/-2)
-        end
-        swordRot = math.atan2(tempVec.y, tempVec.x)
-        swX = tempVec.x * 12
-        swY = tempVec.y * 12
-        
-        if swY > 0 then
-            swLayer = 1
-        end
-    end
-
     local x, y = player:getX(), player:getY()
-    local px, py = player:getX(), player:getY()
+    local px, py = self:getX(), self:getY()
 
+    if self.anim then
+    self.anim:draw(sprites.player.playerWalkSheet, px, py, 0, self.dirX, 1, 8, 16 )
+  end
 
-    -- if px and py then -- Make sure position is valid
-    --     love.graphics.setColor(1, 0, 0, 1) -- Bright red, fully opaque
-    --     -- Draw a 16x16 rectangle centered roughly where the player sprite would be
-    --     love.graphics.rectangle("fill", px - 8, py - 16, 16, 32) 
-    --     love.graphics.setColor(1, 1, 1, 1) -- Reset color to white
-    --     print("Attempting to draw test rectangle at:", px, py) -- Add console print
-    -- else
-    --      print("Player position invalid in draw:", px, py)
-    -- end
+  -- 2) If we’re attacking, draw the sword only then
+  if self.state == 1 then
+    -- compute a perpendicular swing offset
+    local perpAngle = (self.dirX == 1) and math.pi/2 or -math.pi/2
+    local tempVec   = self.attackDir:rotated(perpAngle)
 
-    -- local bowLayer = -1
-    -- player.bowVec = toMouseVector(px, py)
-    -- local bowScaleY = 1
-    -- if player.bowVec.x < 0 then bowScaleY = -1 end
-    -- local bowRot = math.atan2(player.bowVec.y, player.bowVec.x)
-    -- local bowOffX = player.bowVec.x*6
-    -- local bowOffY = player.bowVec.y*6
-    -- local hookOffX = player.bowVec.x*6
-    -- local hookOffY = player.bowVec.y*6
-    -- player.arrowOffX = player.bowVec.x*6
-    -- player.arrowOffY = player.bowVec.y*6
+    -- pivot at the hand, not the body center
+    local handOX, handOY = self:getHandOffset()
+    local baseX, baseY   = px + handOX, py + handOY
 
-    -- if bowRot > -1 * player.rotateMargin or bowRot < (math.pi - player.rotateMargin) * -1 then
-    --     bowLayer = 1
-    -- end
-
-   -- love.graphics.draw(sprites.playerShadow, px, py+5, nil, nil, nil, sprites.playerShadow:getWidth()/2, sprites.playerShadow:getHeight()/2)
+    local swordRot = math.atan2(tempVec.y, tempVec.x)
+    local swX, swY = tempVec.x * 12, tempVec.y * 12
     
-   --love.graphics.draw(sprites.player.playerWalkSheet)
-   --player.anim:draw(sprites.player.playerWalkSheet, player:getX(), player:getY(), nil, player.dirX, 1, 15, 15)
-   
+    local swSpr = sprites.items.sword
+    local ox, oy = swSpr:getWidth()/2, swSpr:getHeight()/2
 
-   if player.anim then
-        -- Draw AT the physics center, using sprite's visual center as origin
-        -- Removed the '-2' from player:getY()
-        -- Origin (8, 16) assumes the sprite is centered within its 16x32 frame
 
-     player.anim:draw(sprites.player.playerWalkSheet, x, y, 0, 1, 1, 8, 16) 
+    -- layer behind or in front
+    if swY <= 0 then
+      love.graphics.draw(swSpr, px + swX , py + swY, swordRot, self.dirX, 1, ox, oy)
     end
-   
-   -- if player.state == 1.1 and swLayer == -1 then
-    --     love.graphics.draw(swSpr, px+swX, py+swY, swordRot, nil, nil, swSpr:getWidth()/2, swSpr:getHeight()/2)
-    -- end
-    
-    -- if player.aiming and bowLayer == -1 then
 
-        
-    --     --if player.stunTimer > 0 then love.graphics.setShader(shaders.whiteout) end
-
-    -- --player.anim:draw(sprites.player.playerWalkSheet, player:getX(), player:getY(), nil, player.dirX, 1, 15, 15)
-    -- player.anim:draw(sprites.player.playerWalkSheet, player:getX() - 8 , player:getY() - 16, nil, player.dirX * player.scaleX, player.scaleX, 16, 32)
+    if swY > 0 then
+      love.graphics.draw(swSpr, px + swX, py + swY, swordRot, self.dirX, 1, ox, oy)
+    end
+  end
+end
 
 
-   -- love.graphics.setShader()
-
-    -- if player.state == 1.1 and swLayer == 1 then
-    --     love.graphics.draw(swSpr, px+swX, py+swY, swordRot, nil, nil, swSpr:getWidth()/2, swSpr:getHeight()/2)
-    -- end
-
-    -- if player.aiming and bowLayer == 1 then
-    --     love.graphics.draw(bowSpr, px + bowOffX, py + bowOffY, bowRot, 1.15, bowScaleY, bowSpr:getWidth()/2, bowSpr:getHeight()/2)
-    --     if data.arrowCount > 0 and player.animTimer <= 0 then love.graphics.draw(arrowSpr, px + bowOffX, py + bowOffY, bowRot, 0.85, nil, arrowSpr:getWidth()/2, arrowSpr:getHeight()/2) end
-    --     --love.graphics.draw(hookSpr, px + hookOffX, py + hookOffY, bowRot, 1.15, nil, hookSpr:getWidth()/2, hookSpr:getHeight()/2)
-    -- end
-
-    -- if player.state == 11 then
-    --     love.graphics.draw(player.holdSprite, player:getX(), player:getY()-18, nil, nil, nil, player.holdSprite:getWidth()/2, player.holdSprite:getHeight()/2)
-    -- end
--- end
- end
-
--- function player:checkDamage()
---     if player.damagedTimer > 0 then return end
-
---     local hitEnemies = world:queryCircleArea(player:getX(), player:getY(), 5, {'Enemy'})
---     if #hitEnemies > 0 then
---         local e = hitEnemies[1]
---         if e.parent.dizzyTimer <= 0 and e.parent.stunTimer <= 0 then
---             player:hurt(0.5, e:getX(), e:getY())
---         end
---     end
-
-    -- to fix the overlap issue, check distance as well
-    -- for _,e in ipairs(enemies) do
-    --     if e.physics and distanceBetween(e.physics:getX(), e.physics:getY(), player:getX(), player:getY()) < 4 then
-    --         player:hurt(0.5, e.physics:getX(), e.physics:getY())
-    --     end
-    -- end
-
---     if player:enter('Projectile') then
---         local e = player:getEnterCollisionData('Projectile')
---         e.collider.dead = true
---         player:hurt(0.5, e.collider:getX(), e.collider:getY())
---     end
--- end
-
--- function player:checkTransition()
---     if player:enter('Transition') then
---         local t = player:getEnterCollisionData('Transition')
---         if t.collider.type == "instant" then
---             triggerTransition(t.collider.id, t.collider.destX, t.collider.destY)
---         else
---             curtain:call(t.collider.id, t.collider.destX, t.collider.destY, t.collider.type)
---         end
---         --triggerTransition(t.collider.id, t.collider.destX, t.collider.destY)
---     end
--- end
 
 -- function player:hurt(damage, srcX, srcY)
 --     if player.damagedTimer > 0 then return end
@@ -252,103 +189,57 @@ function player:draw()
 --     player.aiming = false
 -- end
 
--- Corrected function in src/entities/player_setup.lua (or wherever player methods are defined)
+function player:getHandOffset()
+    local ox, oy = 0, -self.height/4
+    if     self.dir == "right" then
+        ox =  self.width/2 + 1
+        oy = -self.height/4
+    elseif self.dir == "left"  then
+        ox = -self.width/2 - 1
+        oy = -self.height/4
+    elseif self.dir == "up"    then
+        ox =  0
+        oy = -self.height/2 - 1
+    elseif self.dir == "down"  then
+        ox =  2
+        oy =  self.height/2 + 1
+    end
+    return ox, oy
+end
 
-
--- function player:handleMovementAndAnimation() -- Use dot (.) not colon (:)
---     -- This function assumes it's only called when player.state == 0
-
---     local moveX, moveY = 0, 0
---     local isMoving = false 
---     local targetAnim = nil
-
---     -- movement
---     if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
---         isMoving = true
---         moveX = 1
---         player.dirX  = 1
---         targetAnim = player.animations.walkRight
---     end
---     if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
---         isMoving = true
---         moveX = -1
---         player.dirX = -1
---         targetAnim = player.animations.walkLeft
---     end
-
---     if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
---         isMoving = true
---         moveY = 1
---         player.dirY = 1
---         targetAnim = player.animations.walkDown 
---     end 
-    
---     if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
---         isMoving = true
---         moveY = -1
---         player.dirY = -1
---         targetAnim = player.animations.walkUp
---     end
-
---     -- Set animation ONLY if it's different or if movement stopped/started
---     if isMoving then
---         if player.anim ~= targetAnim then
---             player.anim = targetAnim
---             if player.anim then player.anim:gotoFrame(1) end -- Reset new animation
---         end
---     else
---         -- Player stopped moving, switch to idle if not already idle
---         if player.anim ~= player.animations.idle then
---              player.anim = player.animations.idle -- Corrected variable name
---              if player.anim then player.anim:gotoFrame(1) end -- Reset idle animation
---         end
---     end
-
---     -- Normalize diagonal movement - this call should work fine now
---     -- Make sure the 'normalize' table is accessible globally or required in this file
---     if normalize and normalize.NormalizedVector then
---     moveX, moveY = normalize.NormalizedVector(moveX, moveY)    else
---         print("Warning: normalize module not found/loaded.")
---     end
-
---     -- Calculate final velocity vector using player's speed
---     local vec = { x = moveX * player.speed, y = moveY * player.speed } -- Use player.
---         print("Calculated Velocity Vec: x=", vec.x, "y=", vec.y, "| Speed:", player.speed) 
-
---     if player.collider then -- Check collider exists
---        self:setLinearVelocity(vec.x, vec.y) -- Use player.
---     end
-
---     -- Update facing direction based on movement input
---     if moveX ~= 0 then
---         player.dirX = moveX 
---     end
---     if moveY ~= 0 then
---         player.dirY = moveY 
---     end
-    
---     -- Update string direction variable based on prioritized input
---     if moveY == -1 then
---         player.dir = "up" 
---     elseif moveY == 1 then
---         player.dir = "down" 
---     elseif moveX == -1 then
---         player.dir = "left" 
---     elseif moveX == 1 then
---         player.dir = "right" 
---     end
-
-   
--- end 
 
 function player:handleMovement(dt)
     local moveX, moveY = 0, 0
-  local animTo = self.animations.idle
+    local animTo
 
-  if love.keyboard.isDown("d","right") then moveX=1; animTo=self.animations.walkRight; self.dir="right" end
-  if love.keyboard.isDown("a","left")  then moveX=-1; animTo=self.animations.walkLeft;  self.dir="left"  end
-  if love.keyboard.isDown("s","down")  then moveY=1; animTo=self.animations.walkDown;  self.dir="down"  end
-  if love.keyboard.isDown("w","up")    then moveY=-1; animTo=self.animations.walkUp;    self.dir="up"    end
+   if love.keyboard.isDown("d","right") then
+    moveX  = 1
+    self.dir = "right"
+    animTo = self.animations.walkRight
+
+  elseif love.keyboard.isDown("a","left") then
+    moveX  = -1
+    self.dir = "left"
+    animTo = self.animations.walkLeft
+
+  elseif love.keyboard.isDown("s","down") then
+    moveY  = 1
+    self.dir = "down"
+    animTo = self.animations.walkDown
+
+  elseif love.keyboard.isDown("w","up") then
+    moveY  = -1
+    self.dir = "up"
+    animTo = self.animations.walkUp
+
+  else
+    -- no input ⇒ pick the idle that matches your last dir
+    if     self.dir == "right" then animTo = self.animations.idleRight
+    elseif self.dir == "left"  then animTo = self.animations.idleLeft
+    elseif self.dir == "up"    then animTo = self.animations.idleUp
+    else   animTo = self.animations.idleDown
+    end
+  end
 
   -- Switch animation only when it changes
   if self.anim ~= animTo then
@@ -364,40 +255,76 @@ function player:handleMovement(dt)
 
 end
 
+-- function player:attack()
+--     if self.state ~= 0 then return end
+--     self.state = 1
+
+--     -- pick the correct attack anim
+--     if     self.dir == "down"  then self.anim = self.animations.attackDown
+--     elseif self.dir == "up"    then self.anim = self.animations.attackUp
+--     elseif self.dir == "right" then self.anim = self.animations.attackRight
+--     elseif self.dir == "left"  then self.anim = self.animations.attackLeft
+--     end
+
+--     -- restart the anim
+--     if self.anim then
+--         self.anim:gotoFrame(1)
+--         self.anim:update(0)
+--     end
+
+--     -- *** spawn the swing pivot at the hand offset ***
+--     local px, py     = self:getX() , self:getY()
+--     local offX, offY = self:getHandOffset()
+--     self.swing.x     = px + offX 
+--     self.swing.y     = py + offY
+--     self.swing.timer = self.swing.duration
+--     self.swing.active = true
+-- end
 
 function player:swingSword()
+  if self.state ~= 0 then return end
+  self.state = 1
 
-    -- The player can only swing their sword if the player.state is 0 (regular gameplay)
-    if player.state ~= 0 then
-        player:addToBuffer("sword")
-        return
-    end
-    
---player.comboCount = player.comboCount + 1
-    
-    player.attackDir = toMouseVector(player:getX(), player:getY())
-    player:setDirFromVector(player.attackDir)
-    
-    player.state = 1
-    
+  -- pick a cardinal attack anim
+  self.anim = ({
+    down  = self.animations.attackDown,
+    up    = self.animations.attackUp,
+    right = self.animations.attackRight,
+    left  = self.animations.attackLeft,
+  })[ self.dir ]
+
+  -- reset anim & timer
+  self.anim:gotoFrame(1)
+  self.anim:update(0)
+  self.animTimer = 0.1
+
+  -- record a simple cardinal vector for movement / effect
+  local dirVecs = {
+    down  = vector( 0,  1),
+    up    = vector( 0, -1),
+    right = vector( 1,  0),
+    left  = vector(-1,  0),
+  }
+  self.attackDir = dirVecs[self.dir]
+end
+
+
+function player:resetAnimation(direction)
+    --player.anim = player.animations[direction]
     if player.dirX == 1 then
         if player.dirY == 1 then
-            player.anim = player.animations.swordDownRight
+            player.anim = player.animations.idleDown
         else
-            player.anim = player.animations.swordUpRight
+            player.anim = player.animations.idleUp
         end
     else
         if player.dirY == 1 then
-            player.anim = player.animations.swordDownLeft
+            player.anim = player.animations.idleDown
         else
-            player.anim = player.animations.swordUpLeft
+            player.anim = player.animations.idleUp
         end
     end
-    
-    --player.anim:gotoFrame(1)
-    -- animTimer for sword wind-up
-    player.animTimer = 0.075
-
+    player.anim:gotoFrame(1)
 end
 
 function player:swordDamage()

@@ -26,7 +26,7 @@ function requireAll()
     require("src/draw")
 
     -- Effects
-    require("src/effects/slash")
+    require("src.effects.effect")
     --require("src/effects/blast")
     --require("src/effects/effect")
     --require("src/effects/shadows")

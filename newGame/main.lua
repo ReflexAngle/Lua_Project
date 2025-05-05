@@ -80,8 +80,8 @@ function love.keypressed(key)
                 
             elseif key == "f9" then -- Collider toggle
                 colliderToggle = not colliderToggle
-            -- elseif key == 'space' then
-            --     --player:attack()
+            elseif key == 'space' then
+                player:swingSword()
             end
             -- if key == 'return' or key == 'tab' or key == 'e' then
             --     if gamestate == 1 then
