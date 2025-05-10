@@ -18,8 +18,8 @@ player.speed = 90
 player.animSpeed = 0.1 --.14
 player.aiming = false
 player.animTimer = 0
-player.max_hearts = 5
-player.hearts = 4
+player.max_hearts = 7
+player.hearts = 1
 -- player.stunTimer = 0
 -- player.damagedTimer = 0
 player.damagedBool = 1
@@ -86,10 +86,10 @@ player.animations.walkLeft = anim8.newAnimation(player.grid('1-4', 4), player.an
 player.animations.walkRight = anim8.newAnimation(player.grid('1-4', 2), player.animSpeed)
 
 --attack anims
-player.animations.attackDown = anim8.newAnimation(player.grid('1-2', 5), .2)
-player.animations.attackUp = anim8.newAnimation(player.grid('1-2', 6), .2)
-player.animations.attackRight = anim8.newAnimation(player.grid('1-2', 7), .2)
-player.animations.attackLeft = anim8.newAnimation(player.grid('1-2', 8), .2)
+player.animations.attackDown = anim8.newAnimation(player.grid('1-2', 5), .1)
+player.animations.attackUp = anim8.newAnimation(player.grid('1-2', 6), .1)
+player.animations.attackRight = anim8.newAnimation(player.grid('1-2', 7), .1)
+player.animations.attackLeft = anim8.newAnimation(player.grid('1-2', 8), .1)
 
 
 player.anim = player.animations.idleDown
@@ -142,6 +142,16 @@ function player:draw()
     local x, y = player:getX(), player:getY()
     local px, py = self:getX(), self:getY()
 
+     if self.swordVisible and self.swordActive then
+        love.graphics.draw(
+        self.sprites.sword,
+        self.swordX,
+        self.swordY,
+        self.swordAngle,
+        self.playerScaler,
+        self.playerScaler)
+    end
+
     if self.anim then
     self.anim:draw(sprites.player.playerWalkSheet, px, py, 0, self.dirX, 1, 8, 16 )
   end
@@ -188,6 +198,12 @@ end
 --     player.stunTimer = 0.075
 --     player.aiming = false
 -- end
+
+function player.heal(amount)
+    if not amount or amount <= 0 then amount = 1 end -- Default heal amount if not specified or invalid
+    player.hearts = math.min(player.max_hearts, player.hearts + amount)
+    print("you healed Current hearts:", player.hearts .. "/" .. player.max_hearts)
+end
 
 function player:getHandOffset()
     local ox, oy = 0, -self.height/4

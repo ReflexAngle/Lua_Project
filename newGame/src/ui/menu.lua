@@ -21,7 +21,12 @@ end
 function menu:select(key)
     if gamestate == 0 then
         if key ~= "space" then return end
-
+        
+        function Menu:keypressed(key)
+    if key == "space" then
+        GState:change(1)
+    end
+end
         startFresh(1)
 
         if data.map and string.len(data.map) > 0 then
@@ -31,18 +36,4 @@ function menu:select(key)
         return
 
     end
-    
-    -- Testing destinations (be sure to remove!)
-    --[[
-        if key == "1" then
-            loadMap("test")
-        elseif key == "2" then
-            loadMap("test5")
-        elseif key == "3" then
-            loadMap("test2")
-            
-        elseif key == "4" then
-            loadMap("testDungeon2", 408, 494)
-        end
-        ]]
 end

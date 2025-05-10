@@ -1,13 +1,15 @@
 --local saveData = require("scripts/events/saveDataEvent")
 local cameraFollow = require("src/camera/cameraFollow")
 --local normalize = require("scripts/math/normalization")
+local StateMachine = require("src/states/stateMachine")
 local enemy = require("src/enemies/enemyBehavior")
-
+local Commands = require("src/command/commands")
 
 -- loading
 function love.load()
     print("game loading")
     require("src/startup/gameStart")
+     GState = StateMachine.new()
     gameStart()
     --createNewSave()
     currMap = "menu"
@@ -26,6 +28,9 @@ end
 
 -- update
 function love.update(dt)
+    -- this will show our game state it console
+    print("This is the current GameState:")
+    print(gamestate)
     if gamestate == 1 then
         updateAll(dt) 
 
@@ -82,6 +87,14 @@ function love.keypressed(key)
                 colliderToggle = not colliderToggle
             elseif key == 'space' then
                 player:swingSword()
+            elseif key == "q" then -- Heal key
+                if player and Commands and Commands.HealCommand then
+                    -- Here, you explicitly create the command to heal by 1 heart
+                    local healPlayerCommand = Commands.HealCommand:new(player, 1)
+                    healPlayerCommand:execute()
+                else
+                print("Error: Player or HealCommand not available.")
+                end
             end
             -- if key == 'return' or key == 'tab' or key == 'e' then
             --     if gamestate == 1 then

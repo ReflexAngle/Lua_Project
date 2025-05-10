@@ -53,6 +53,7 @@ end
 
 function love.update(dt)
     --local pressed = false
+    print
     local dx, dy = 0, 0
 
     slash:update(dt)

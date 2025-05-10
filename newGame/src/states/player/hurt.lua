@@ -88,7 +88,7 @@ function Hurt:leave(player, nextStateName)
     print("Player leaving Hurt state", nextStateName)
     player.stunTimer = 0 -- Ensure stun is cleared
     player:setLinearDamping(player.baseDamping) -- Restore normal damping
-    -- love.graphics.setColor(1,1,1,1) -- Reset color if changed in draw
+
 end
 
 return Hurt:new()
